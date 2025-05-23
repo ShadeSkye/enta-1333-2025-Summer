@@ -8,5 +8,9 @@ public class TerrainType : ScriptableObject
     [SerializeField] private string terrainName = "Default";
     [SerializeField] private Color gizmoColor = Color.green;
     [SerializeField] private bool walkable = true;
-    [SerializeField] private int movementCost = 1;
+    [SerializeField] private int weight = 1;
+
+    public string TerrainName => terrainName;
+    public bool Walkable => walkable;
+    public int Weight => weight;
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Android.Types;
@@ -6,7 +7,7 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private GridSettings gridSettings;
-    [SerializeField] private TerrainType defaultTerrainType;
+    [SerializeField] private List<TerrainType> chosenTerrain;
     public GridSettings GridSettings => gridSettings;
 
     public GridNode[,] gridNodes;
@@ -24,12 +25,14 @@ public class GridManager : MonoBehaviour
                     ? new Vector3(x, 0, y) * gridSettings.NodeSize
                     : new Vector3(x, y, 0) * gridSettings.NodeSize;
 
+                TerrainType terrain = chosenTerrain[0];
+
                 GridNode node = new GridNode
                 {
-                    Name = $"Cell_{(x + gridSettings.GridSizeX * x) + y}",
+                    Name = $"{terrain.TerrainName}_{(x + gridSettings.GridSizeX * x) + y}",
                     WorldPosition = worldPos,
-                    Walkable = true,
-                    Weight = 1
+                    Walkable = terrain.Walkable,
+                    Weight = terrain.Weight
                 };
                 gridNodes[x, y] = node;
             }
@@ -37,17 +40,6 @@ public class GridManager : MonoBehaviour
         IsInitialized = true;
 
     }
-
-    /*
-    public GridNode GetNode(int x, int y)
-    {
-
-    }
-
-    public void SetWalkable(int x, int y, bool walkable)
-    {
-
-    } */
 
     private void OnDrawGizmos()
     {
