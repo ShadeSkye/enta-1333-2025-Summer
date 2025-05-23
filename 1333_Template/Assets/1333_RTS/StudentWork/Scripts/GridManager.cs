@@ -25,20 +25,26 @@ public class GridManager : MonoBehaviour
                     ? new Vector3(x, 0, y) * gridSettings.NodeSize
                     : new Vector3(x, y, 0) * gridSettings.NodeSize;
 
-                TerrainType terrain = chosenTerrain[0];
+                TerrainType terrain = chosenTerrain[UnityEngine.Random.Range(0, chosenTerrain.Count)];
 
                 GridNode node = new GridNode
                 {
                     Name = $"{terrain.TerrainName}_{(x + gridSettings.GridSizeX * x) + y}",
                     WorldPosition = worldPos,
                     Walkable = terrain.Walkable,
-                    Weight = terrain.Weight
+                    Weight = terrain.Weight,
+                    GizmoColor = terrain.GizmoColor
                 };
                 gridNodes[x, y] = node;
             }
         }
         IsInitialized = true;
 
+    }
+
+    public GridNode GetNode(int x, int y)
+    {
+        return gridNodes[x, y];
     }
 
     private void OnDrawGizmos()
@@ -50,9 +56,20 @@ public class GridManager : MonoBehaviour
             for (int y = 0;y < gridSettings.GridSizeY; y++)
             {
                 GridNode node = gridNodes[x, y];
-                Gizmos.color = node.Walkable ? Color.green : Color.red;
+                Gizmos.color = node.GizmoColor;
                 Gizmos.DrawWireCube(node.WorldPosition, Vector3.one * GridSettings.NodeSize * 0.9f);
             }
         }
+    }
+
+    public GridNode getNodeFromWorldPosition(Vector3 position)
+    {
+        int x = gridSettings.UseXZPlane ? Mathf.RoundToInt(position.x / gridSettings.NodeSize) : Mathf.RoundToInt(position.x / gridSettings.NodeSize);
+        int y = gridSettings.UseXZPlane ? Mathf.RoundToInt(position.z / gridSettings.NodeSize) : Mathf.RoundToInt(position.z / gridSettings.NodeSize);
+
+        x = Mathf.Clamp(x, 0, gridSettings.GridSizeX - 1);
+        y = Mathf.Clamp(y, 0, gridSettings .GridSizeY - 1);
+
+        return GetNode(x, y);
     }
 }
