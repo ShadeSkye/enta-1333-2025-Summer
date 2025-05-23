@@ -4,31 +4,43 @@ using UnityEngine;
 
 public class CameraControler : MonoBehaviour
 {
-    public float panSpeed = 20f;
-    public float panBorderThickness = 10f;
+    public float PanSpeed;
+    public float PanBorderTickness;
+    public float MinHeight;
+    public float MaxHeight;
 
     // Update is called once per frame
     void Update()
     {
         Vector3 pos = transform.position;
-        if (Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
+        if (Input.GetKey("w") || Input.mousePosition.y >= Screen.height - PanBorderTickness)
         {
-            pos.z += panSpeed * Time.deltaTime;
+            pos.z += PanSpeed * Time.deltaTime;
         }
 
-        if (Input.GetKey("s") || Input.mousePosition.y <= panBorderThickness)
+        if (Input.GetKey("s") || Input.mousePosition.y <= PanBorderTickness)
         {
-            pos.z -= panSpeed * Time.deltaTime;
+            pos.z -= PanSpeed * Time.deltaTime;
         }
 
-        if (Input.GetKey("d") || Input.mousePosition.x >= Screen.width - panBorderThickness)
+        if (Input.GetKey("d") || Input.mousePosition.x >= Screen.width - PanBorderTickness)
         {
-            pos.x += panSpeed * Time.deltaTime;
+            pos.x += PanSpeed * Time.deltaTime;
         }
 
-        if (Input.GetKey("a") || Input.mousePosition.x <= panBorderThickness)
+        if (Input.GetKey("a") || Input.mousePosition.x <= PanBorderTickness)
         {
-            pos.x -= panSpeed * Time.deltaTime;
+            pos.x -= PanSpeed * Time.deltaTime;
+        }
+
+        if (Input.GetKey("e"))
+        {
+            pos.y += PanSpeed * Time.deltaTime;
+        }
+
+        if (Input.GetKey("q"))
+        {
+            pos.y -= PanSpeed * Time.deltaTime;
         }
 
         transform.position = pos;
