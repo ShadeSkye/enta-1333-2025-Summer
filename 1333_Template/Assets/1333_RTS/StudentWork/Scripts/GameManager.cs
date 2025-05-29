@@ -6,10 +6,80 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
     [SerializeField] private UnitManager unitManager;
-    [SerializeField] private PathfindingAlgorithm pathfinder;
+    [SerializeField] private Pathfinder pathfinder;
+    [SerializeField] private Transform startMarker;
+    [SerializeField] private Transform endMarker;
+    [SerializeField] private LineRenderer pathLine;
+    [SerializeField] private float markerHeight = 0.5f;
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            Debug.LogError("Missing required references");
+            enabled = false;
+            return;
+        }
+
         gridManager.InitializeGrid();
+    }
+
+    private bool ValidateReferences()
+    {
+        if(!gridManager || !pathfinder || !startMarker || !endMarker || !pathLine)
+        {
+            return false; 
+        }
+
+        return true;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RandomizeAndPathfind();
+        }
+    }
+
+    private void RandomizeAndPathfind()
+    {
+        RandomizeAll();
+
+        var path = pathfinder.FindPath(startMarker.position, endMarker.position);
+        string message = $"Path found: {path.Count} steps. Start at {startMarker.position}, end at {endMarker.position}.";
+        foreach(var p in path)
+        {
+            message += $" > {p.WorldPosition}";
+        }
+
+        message += $" > end at {endMarker.position}";
+        Debug.Log(message);
+    }
+
+    private void RandomizeAll()
+    {
+        gridManager.RandomizeTerrain();
+        RandomizeMarkers();
+    }
+
+    private void RandomizeMarkers()
+    {
+        int gridSizeX = gridManager.GridSettings.GridSizeX;
+        int gridSizeY = gridManager.GridSettings.GridSizeY;
+        float nodeSize = gridManager.GridSettings.NodeSize;
+
+        int StartX = Random.Range(0, gridSizeX);
+        int StartY = Random.Range(0, gridSizeY);
+        startMarker.position = new Vector3(StartX * nodeSize, markerHeight, StartY * nodeSize);
+
+        int endX, endY;
+        do
+        {
+                endX = Random.Range(0, gridSizeX);
+                endY = Random.Range(0, gridSizeY);
+        }while(endX == StartX && endY == StartY);
+
+        endMarker.position = new Vector3(endX * nodeSize, markerHeight, endY * nodeSize);
     }
 }

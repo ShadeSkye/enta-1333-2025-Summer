@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public struct GridNode
 {
+    public TerrainType TerrainType;
     public string Name;
     public Vector3 WorldPosition;
     public bool Walkable;
