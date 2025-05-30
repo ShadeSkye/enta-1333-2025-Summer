@@ -19,10 +19,10 @@ public class AStarPathfinder : PathfindingAlgorithm
         int gridSizeY = gridManager.GridSettings.GridSizeY;
         float nodeSize = gridManager.GridSettings.NodeSize;
         int nodeX = Mathf.RoundToInt(node.WorldPosition.x / nodeSize);
-        int nodeY = Mathf.RoundToInt(node.WorldPosition.y / nodeSize);
-        if(nodeY + 1 < gridSizeY) neighbors.Add(gridManager.GetNode(nodeX, nodeY + 1));
-        if(nodeY - 1 >= 0) neighbors.Add(gridManager.GetNode(nodeX, nodeY - 1));
-        if (nodeX + 1 < gridSizeY) neighbors.Add(gridManager.GetNode(nodeX + 1, nodeY));
+        int nodeY = Mathf.RoundToInt(node.WorldPosition.z / nodeSize);
+        if (nodeY + 1 < gridSizeY) neighbors.Add(gridManager.GetNode(nodeX, nodeY + 1));
+        if (nodeY - 1 >= 0) neighbors.Add(gridManager.GetNode(nodeX, nodeY - 1));
+        if (nodeX + 1 < gridSizeX) neighbors.Add(gridManager.GetNode(nodeX + 1, nodeY));
         if (nodeX - 1 >= 0) neighbors.Add(gridManager.GetNode(nodeX - 1, nodeY));
         return neighbors;
     }
@@ -38,6 +38,11 @@ public class AStarPathfinder : PathfindingAlgorithm
 
     public List<GridNode> FindPath(GridManager gridManager, GridNode start, GridNode end)
     {
+        Debug.Log("Finding path");
+
+        Debug.Log(start.Name);
+        Debug.Log(end.Name);
+
         // preparing data structures
         List<GridNode> openSet = new List<GridNode>();
         Dictionary<GridNode, int> costSoFar = new Dictionary<GridNode, int>();
@@ -54,7 +59,7 @@ public class AStarPathfinder : PathfindingAlgorithm
         while (openSet.Count > 0)
         {
             GridNode current = openSet[0];
-            foreach(var node in openSet)
+            foreach (var node in openSet)
             {
                 if (estimatedTotalCost[node] < estimatedTotalCost[current])
                     current = node;
@@ -62,35 +67,58 @@ public class AStarPathfinder : PathfindingAlgorithm
 
             // stops if end node is reached
             if (current.Equals(end))
+            {
+                Debug.LogWarning("Got to the end");
                 break;
+
+            }
 
             openSet.Remove(current);
 
             // explores sorrounding grids
-            foreach(GridNode neighbor in GetNeighbors(gridManager, current))
+            foreach (GridNode neighbor in GetNeighbors(gridManager, current))
             {
+                Debug.Log($"Searching neighbours of {current.WorldPosition}");
+
                 if (!IsAreaWalkable(gridManager, neighbor))
+                {
+                    Debug.Log("Not walkable");
                     continue;
+                }
+                else
+                {
+                    Debug.Log("It is walkable");
+                }
 
                 int newCost = costSoFar[current] + neighbor.Weight;
 
-                if(!costSoFar.ContainsKey(neighbor) || newCost < costSoFar[neighbor])
+                if (!costSoFar.ContainsKey(neighbor) || newCost < costSoFar[neighbor])
                 {
+
                     costSoFar[neighbor] = newCost;
                     estimatedTotalCost[neighbor] = newCost + Heuristic(neighbor, end);
                     cameFrom[neighbor] = current;
 
-                    if(!openSet.Contains(neighbor))
+                    if (!openSet.Contains(neighbor))
+                    {
+                        Debug.Log("ADDING TO OPEN SET");
                         openSet.Add(neighbor);
+                    }
+
                 }
             }
         }
 
+
         List<GridNode> path = new List<GridNode>();
         GridNode pathNode = end;
 
-        if(!cameFrom.ContainsKey(end))
+        if (!cameFrom.ContainsKey(end))
+        {
+            Debug.LogError("Couldn't find a path");
             return path;
+        }
+
 
         while (!pathNode.Equals(start))
         {
@@ -101,8 +129,11 @@ public class AStarPathfinder : PathfindingAlgorithm
 
         path.Reverse();
 
+        Debug.Log(path.Count);
+
         return path;
     }
+
 
     public override List<GridNode> FindPath(GridNode start, GridNode end)
     {
@@ -112,5 +143,10 @@ public class AStarPathfinder : PathfindingAlgorithm
     public override List<GridNode> FindPath(Vector3 start, Vector3 end)
     {
         throw new System.NotImplementedException();
+    }
+
+    private void OnDrawGizmos()
+    {
+        
     }
 }

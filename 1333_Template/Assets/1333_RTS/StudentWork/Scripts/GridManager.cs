@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Android.Types;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private GridSettings gridSettings;
+    [SerializeField] private List<TerrainType> chosenTerrain;
     public GridSettings GridSettings => gridSettings;
 
     public GridNode[,] gridNodes;
@@ -26,14 +28,15 @@ public class GridManager : MonoBehaviour
                     ? new Vector3(x, 0, y) * gridSettings.NodeSize
                     : new Vector3(x, y, 0) * gridSettings.NodeSize;
 
+                TerrainType terrain = chosenTerrain[UnityEngine.Random.Range(0, chosenTerrain.Count)];
+
                 GridNode node = new GridNode
                 {
                     Name = $"Cell_{(x + gridSettings.GridSizeX * x) + y}",
                     WorldPosition = worldPos,
-                    Walkable = gridSettings.DefaultTerrainType.Walkable,
-                    Weight = gridSettings.DefaultTerrainType.Weight,
-                    GizmoColor = gridSettings.DefaultTerrainType.GizmoColor,
-                    TerrainType = gridSettings.DefaultTerrainType
+                    Walkable = terrain.Walkable,
+                    Weight = terrain.Weight,
+                    GizmoColor = terrain.GizmoColor
                 };
                 gridNodes[x, y] = node;
             }
@@ -57,8 +60,7 @@ public class GridManager : MonoBehaviour
                     WorldPosition = node.WorldPosition,
                     Walkable = node.Walkable,
                     Weight = node.Weight,
-                    GizmoColor = node.GizmoColor,
-                    TerrainType = node.TerrainType
+                    GizmoColor = node.GizmoColor
                 });
             }
         }
@@ -107,6 +109,7 @@ public class GridManager : MonoBehaviour
 
     public void RandomizeTerrain()
     {
+
         int gridSizeX = gridSettings.GridSizeX;
         int gridSizeY = gridSettings.GridSizeY;
 

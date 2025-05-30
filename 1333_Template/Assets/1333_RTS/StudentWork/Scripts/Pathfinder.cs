@@ -15,6 +15,8 @@ public class Pathfinder : MonoBehaviour
     {
         List<GridNode> path;
 
+        Debug.Log(aStarPathfinder);
+
         path = aStarPathfinder.FindPath(gridManager, start, end);
 
         if(drawLastPathGizmos) lastPath = path;

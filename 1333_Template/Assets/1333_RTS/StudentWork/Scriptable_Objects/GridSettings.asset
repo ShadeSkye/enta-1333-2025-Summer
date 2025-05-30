@@ -15,3 +15,9 @@ MonoBehaviour:
   gridSizeX: 10
   gridSizeY: 10
   nodeSize: 1
+  useXZPlane: 1
+  defaultTerrainType: {fileID: 11400000, guid: 340263a899971bb41bc670fe5b08fe4c, type: 2}
+  terrainTypes:
+  - {fileID: 11400000, guid: 340263a899971bb41bc670fe5b08fe4c, type: 2}
+  - {fileID: 11400000, guid: 4f164229ad195a04aa179bce81a39f45, type: 2}
+  - {fileID: 11400000, guid: 9a74687677373b944a7988319fb30af8, type: 2}
