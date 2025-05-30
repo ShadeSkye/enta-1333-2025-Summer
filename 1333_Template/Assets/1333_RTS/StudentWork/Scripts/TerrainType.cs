@@ -11,6 +11,7 @@ public class TerrainType : ScriptableObject
     [SerializeField] private int weight = 1;
 
     public string TerrainName => terrainName;
+    public Color GizmoColor => gizmoColor;
     public bool Walkable => walkable;
     public int Weight => weight;
 }

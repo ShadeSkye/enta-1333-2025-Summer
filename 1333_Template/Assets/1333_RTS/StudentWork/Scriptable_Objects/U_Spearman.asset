@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7db7701841e59eb45bdc6bd18f24f170, type: 3}
-  m_Name: GridSettings
+  m_Script: {fileID: 11500000, guid: caac6d836ae0f254c8e8e38f39c3ee38, type: 3}
+  m_Name: U_Spearman
   m_EditorClassIdentifier: 
-  gridSizeX: 10
-  gridSizeY: 10
-  nodeSize: 1
+  health: 100
+  movementSpeed: 1
+  range: 2
+  damage: 20
+  attackType: 0

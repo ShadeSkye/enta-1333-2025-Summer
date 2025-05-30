@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class UnitManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private GridManager gridManager;
+    public void SpawnDummyUnit(Transform parent)
     {
-        
-    }
+        if (!gridManager.IsInitialized)
+        {
+            Debug.Log("Grid not initialized");
+            return;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        int randomX = Random.Range(0, gridManager.GridSettings.GridSizeX);
+        int randomY = Random.Range(0, gridManager.GridSettings.GridSizeY);
     }
 }
