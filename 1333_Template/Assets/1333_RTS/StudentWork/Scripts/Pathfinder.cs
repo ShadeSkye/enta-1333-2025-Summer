@@ -15,7 +15,7 @@ public class Pathfinder : MonoBehaviour
     {
         List<GridNode> path;
 
-        Debug.Log(aStarPathfinder);
+        //Debug.Log(aStarPathfinder);
 
         path = aStarPathfinder.FindPath(gridManager, start, end);
 
@@ -25,8 +25,8 @@ public class Pathfinder : MonoBehaviour
 
     public List<GridNode> FindPath(Vector3 start, Vector3 end)
     {
-        GridNode startNode = gridManager.getNodeFromWorldPosition(start);
-        GridNode endNode = gridManager.getNodeFromWorldPosition(end);
+        GridNode startNode = gridManager.GetNodeFromWorldPosition(start);
+        GridNode endNode = gridManager.GetNodeFromWorldPosition(end);
         return FindPath(startNode, endNode);
     }
 

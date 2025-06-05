@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] Vector2Int endMarker;*/
     [SerializeField] private LineRenderer pathLine;
     [SerializeField] private float markerHeight = 0.5f;
-    [SerializeField] private UnitType _testUnit;
 
     private void Awake()
     {
@@ -25,6 +24,8 @@ public class GameManager : MonoBehaviour
         }
 
         gridManager.InitializeGrid();
+        //unitManager.SpawnDummyUnit(startMarker);
+        //unitManager.SpawnDummyUnit(endMarker);
 
     }
 
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
     {
         RandomizeAll();
 
-        var path = pathfinder.FindPath(gridManager.getNodeFromWorldPosition(startMarker.position), gridManager.getNodeFromWorldPosition(endMarker.position));
+        var path = pathfinder.FindPath(gridManager.GetNodeFromWorldPosition(startMarker.position), gridManager.GetNodeFromWorldPosition(endMarker.position));
         //Debug.Log(path.Count);
         string message = $"Path found: {path.Count} steps. Start at {startMarker}, end at {endMarker}.";
         foreach(var p in path)
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour
         }
 
         message += $" > end at {endMarker}";
-        Debug.Log(message);
+        //Debug.Log(message);
     }
 
     private void RandomizeAll()

@@ -14,4 +14,9 @@ public class UnitType : ScriptableObject
     [SerializeField] private GameObject _unitPrefab;
 
     public GameObject UnitPrefab => _unitPrefab;
+    public int Health => _health;
+    public float MovementSpeed => _movementSpeed;
+    public int Range => _range;
+    public int Damage => _damage;
+    public AttackType AttackType => _attackType;
 }

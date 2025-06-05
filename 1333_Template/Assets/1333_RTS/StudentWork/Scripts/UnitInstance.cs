@@ -11,14 +11,19 @@ public class UnitInstance : UnitBase
     [SerializeField] private Animator _characterAnimator;
     [SerializeField] private GameObject _unitSkin;
     [SerializeField] private ParticleSystem _hurtParticles;
+    
 
     private Pathfinder _pathfinder;
     private List<GridNode> _currentPath = new List<GridNode>();
     private int _pathIndex = 0;
     private Vector3? _targetWorldPosition = null;
     private bool _isMoving = false;
+    private new UnitType _unitType;
 
+   
     public bool IsMoving => _isMoving;
+
+   
     public List<GridNode> CurrentPath => _currentPath;
 
     public void Initialize(Pathfinder pathfinder, UnitType unitType)
@@ -26,19 +31,63 @@ public class UnitInstance : UnitBase
         _pathfinder = pathfinder;
         _unitType = unitType;
 
-        foreach(SkinnedMeshRenderer skin in _unitSkin.GetComponentsInChildren<SkinnedMeshRenderer>())
+        foreach (SkinnedMeshRenderer skin in _unitSkin.GetComponentsInChildren<SkinnedMeshRenderer>())
         {
             //change materials to match team
         }
     }
 
-    public void SetTarget(Vector3 worldPosition)
+    private void Update()
     {
-        _targetWorldPosition = worldPosition;
+        
+        if (!_isMoving || _currentPath == null || _currentPath.Count == 0 || _pathIndex >= _currentPath.Count)
+            return;
+
+        
+        Vector3 nextWaypoint = _currentPath[_pathIndex].WorldPosition;
+       
+        Vector3 direction = (nextWaypoint - transform.position).normalized;
+        float step = _unitType.MovementSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, nextWaypoint, step);
+
+        
+        if (Vector3.Distance(transform.position, nextWaypoint) < 0.05f)
+        {
+            _pathIndex++;
+            
+            if (_pathIndex >= _currentPath.Count)
+            {
+                _isMoving = false;
+            }
+        }
     }
 
+    /// <summary>
+    /// sets the target based off the world position
+    /// </summary>
+    public void SetTarget(Vector3 worldPosition)
+    {
+        // Store the target.
+        _targetWorldPosition = worldPosition;
+        // Request a path from Pathfinder.
+        _currentPath = _pathfinder.FindPath(transform.position, worldPosition);
+        _pathIndex = 0;
+        _isMoving = _currentPath != null && _currentPath.Count > 1;
+    }
+
+    /// <summary>
+    /// sets the target based off the grid node
+    /// </summary>
+    public void SetTarget(GridNode node)
+    {
+        SetTarget(node.WorldPosition);
+    }
+
+    /// <summary>
+    /// moves the unit to the target
+    /// </summary>
     public override void MoveTo(GridNode targetNode)
     {
-        throw new System.NotImplementedException();
+        SetTarget(targetNode);
     }
 }

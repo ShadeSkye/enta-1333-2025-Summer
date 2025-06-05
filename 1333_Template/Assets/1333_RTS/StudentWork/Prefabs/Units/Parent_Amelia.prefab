@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 541392126775658909}
+  - component: {fileID: 5277406957602714164}
   m_Layer: 0
   m_Name: Parent_Amelia
   m_TagString: Untagged
@@ -30,10 +31,26 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8094259581942303160}
-  - {fileID: 3718976332261231495}
   - {fileID: 1182637897496789123}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5277406957602714164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330097870405763816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a00e22b9c80db34f9516c777f974e15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitType: {fileID: 11400000, guid: 92eb4583a1c29604ba6b912bd65083ce, type: 2}
+  State: 0
+  _characterAnimator: {fileID: 9500222, guid: 17bcfb47ca4454e42a67eafb25d8b7ad, type: 3}
+  _unitSkin: {fileID: 123088, guid: 17bcfb47ca4454e42a67eafb25d8b7ad, type: 3}
+  _hurtParticles: {fileID: 4133105666618860518}
 --- !u!1 &1587984951298084559
 GameObject:
   m_ObjectHideFlags: 0
@@ -51,7 +68,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1182637897496789123
 Transform:
   m_ObjectHideFlags: 0
@@ -4866,37 +4883,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &6634075710536058895
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3718976332261231495}
-  m_Layer: 0
-  m_Name: HeadLocator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3718976332261231495
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6634075710536058895}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.1955514, y: 0.5402379, z: -4.178531}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 541392126775658909}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8094259581942757452
 PrefabInstance:
   m_ObjectHideFlags: 0

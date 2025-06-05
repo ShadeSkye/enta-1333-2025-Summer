@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caac6d836ae0f254c8e8e38f39c3ee38, type: 3}
   m_Name: U_Spearman
   m_EditorClassIdentifier: 
-  health: 100
-  movementSpeed: 1
-  range: 2
-  damage: 20
-  attackType: 0
+  _health: 100
+  _movementSpeed: 5
+  _range: 3
+  _damage: 35
+  _attackType: 0
+  _unitPrefab: {fileID: 1330097870405763816, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}

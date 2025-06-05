@@ -96,7 +96,7 @@ public class GridManager : MonoBehaviour
         PopulateDebugList();
     }
 
-    public GridNode getNodeFromWorldPosition(Vector3 position)
+    public GridNode GetNodeFromWorldPosition(Vector3 position)
     {
         int x = gridSettings.UseXZPlane ? Mathf.RoundToInt(position.x / gridSettings.NodeSize) : Mathf.RoundToInt(position.x / gridSettings.NodeSize);
         int y = gridSettings.UseXZPlane ? Mathf.RoundToInt(position.z / gridSettings.NodeSize) : Mathf.RoundToInt(position.z / gridSettings.NodeSize);

@@ -1,8 +1,238 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ArmyPathfindingTester : MonoBehaviour
 {
-    
+    [SerializeField] private GridManager gridManager;
+    [SerializeField] private Pathfinder pathfinder;
+    [SerializeField] private List<ArmyComposition> armyCompositions = new();
+    [SerializeField] private int patrolRange = 8;
+    [SerializeField] private float detectionRange = 4f;
+
+    private readonly List<ArmyManager> _armies = new();
+    private enum UnitState { Patrol, Follow }
+    private readonly Dictionary<UnitInstance, UnitState> _unitStates = new();
+    private readonly Dictionary<UnitInstance, Vector3[]> _patrolPoints = new();
+    private readonly Dictionary<UnitInstance, int> _patrolTargetIndex = new();
+    private readonly Dictionary<UnitInstance, UnitInstance> _followTargets = new();
+    private readonly Dictionary<UnitInstance, Vector3> _lastKnownEnemyPos = new();
+
+    private static readonly Color[] ArmyColors = new Color[]
+    {
+            Color.blue, Color.red
+    };
+
+    private void Start()
+    {
+        _armies.Clear();
+        for (int i = 0; i < armyCompositions.Count; i++)
+        {
+            ArmyManager army = new ArmyManager { ArmyID = i + 1, GridManager = gridManager };
+            SpawnArmyUnits(army, armyCompositions[i]);
+            _armies.Add(army);
+        }
+    }
+
+    /// <summary>
+    /// spawns units for an army
+    /// </summary>
+    /// <param name="army"></param>
+    /// <param name="composition"></param>
+    private void SpawnArmyUnits(ArmyManager army, ArmyComposition composition)
+    {
+        // Loop through each unit entry in the composition.
+        foreach (var entry in composition.units)
+        {
+            // For the specified count, spawn that many units of this type.
+            for (int i = 0; i < entry.count; i++)
+            {
+                int attempts = 0;
+                int maxAttempts = 1000;
+                Vector3 spawnPos = Vector3.zero;
+                bool found = false;
+                while (!found && attempts < maxAttempts)
+                {
+                    int x = Random.Range(0, gridManager.GridSettings.GridSizeX);
+                    int y = Random.Range(0, gridManager.GridSettings.GridSizeY);
+                   
+                    spawnPos = gridManager.GetNode(x, y).WorldPosition;
+                    found = true;
+                   
+                    attempts++;
+                }
+                if (!found)
+                {
+                    Debug.LogWarning($"Failed to find valid spawn position for unit {entry.unitTypePrefab.unitType.name}.");
+                    continue;
+                }
+                // Instantiate the unit prefab at the spawn position.
+                GameObject go = Instantiate(entry.unitTypePrefab.unitPrefab, spawnPos, Quaternion.identity);
+                // Get the UnitInstance component.
+                UnitInstance unit = go.GetComponent<UnitInstance>();
+                // Initialize the unit with its pathfinder and type.
+                unit.Initialize(pathfinder, entry.unitTypePrefab.unitType);
+                // Add to the army's unit list.
+                army.Units.Add(unit);
+                // Initialize state to Patrol.
+                _unitStates[unit] = UnitState.Patrol;
+                // Pick two random patrol points within patrolRange.
+                _patrolPoints[unit] = new Vector3[2] {
+                        GetRandomPatrolPoint(spawnPos),
+                        GetRandomPatrolPoint(spawnPos)
+                    };
+                _patrolTargetIndex[unit] = 0;
+            }
+        }
+    }
+
+    // Picks a random patrol point within patrolRange of a given position
+    private Vector3 GetRandomPatrolPoint(Vector3 origin)
+    {
+        GridNode node = gridManager.GetNodeFromWorldPosition(origin);
+        float nodeSize = gridManager.GridSettings.NodeSize;
+        int nodeX = Mathf.RoundToInt(node.WorldPosition.x / nodeSize);
+        int nodeY = Mathf.RoundToInt(node.WorldPosition.z / nodeSize);
+        int x = Mathf.Clamp(Random.Range(nodeX - patrolRange, nodeX + patrolRange), 0, gridManager.GridSettings.GridSizeX - 1);
+        int y = Mathf.Clamp(Random.Range(nodeY - patrolRange, nodeY + patrolRange), 0, gridManager.GridSettings.GridSizeY - 1);
+        for (int tries = 0; tries < 20; tries++)
+        {
+            int tryX = Mathf.Clamp(x + Random.Range(-patrolRange, patrolRange), 0, gridManager.GridSettings.GridSizeX);
+            int tryY = Mathf.Clamp(y + Random.Range(-patrolRange, patrolRange), 0, gridManager.GridSettings.GridSizeY);
+            
+            return gridManager.GetNode(tryX, tryY).WorldPosition;
+        }
+        return node.WorldPosition;
+    }
+
+    // Called every frame to update unit states and behaviors.
+    private void Update()
+    {
+        // For each army, update its units against all other armies.
+        for (int i = 0; i < _armies.Count; i++)
+        {
+            ArmyManager ownArmy = _armies[i];
+            // Build a list of all enemy units (from all other armies).
+            List<UnitInstance> enemyUnits = new();
+            for (int j = 0; j < _armies.Count; j++)
+            {
+                if (i == j) continue;
+                enemyUnits.AddRange(_armies[j].Units.Select(x => x as UnitInstance));
+            }
+            UpdateArmyUnits(ownArmy, enemyUnits);
+        }
+    }
+
+    // Updates all units in one army, checking for enemy detection and state transitions.
+    private void UpdateArmyUnits(ArmyManager ownArmy, List<UnitInstance> enemyUnits)
+    {
+        foreach (UnitInstance unit in ownArmy.Units)
+        {
+            if (unit == null) continue;
+            UnitState state = _unitStates[unit];
+            switch (state)
+            {
+                case UnitState.Patrol:
+                    UnitInstance enemy = FindNearestEnemy(unit, enemyUnits);
+                    if (enemy != null)
+                    {
+                        _unitStates[unit] = UnitState.Follow;
+                        _followTargets[unit] = enemy;
+                        _lastKnownEnemyPos[unit] = enemy.transform.position;
+                        unit.SetTarget(enemy.transform.position);
+                    }
+                    else
+                    {
+                        PatrolBehavior(unit);
+                    }
+                    break;
+                case UnitState.Follow:
+                    if (!_followTargets.ContainsKey(unit) || _followTargets[unit] == null)
+                    {
+                        _unitStates[unit] = UnitState.Patrol;
+                        break;
+                    }
+                    UnitInstance target = _followTargets[unit];
+                    if (Vector3.Distance(_lastKnownEnemyPos[unit], target.transform.position) > 0.5f)
+                    {
+                        _lastKnownEnemyPos[unit] = target.transform.position;
+                        unit.SetTarget(target.transform.position);
+                    }
+                    if (Vector3.Distance(unit.transform.position, target.transform.position) > detectionRange * 2)
+                    {
+                        _unitStates[unit] = UnitState.Patrol;
+                        break;
+                    }
+                    break;
+            }
+        }
+    }
+
+    // Patrol behavior: move between two patrol points.
+    private void PatrolBehavior(UnitInstance unit)
+    {
+        // Get patrol points and current target index for this unit.
+        Vector3[] points = _patrolPoints[unit];
+        int idx = _patrolTargetIndex[unit];
+        // If the unit is close to the patrol point, switch to the next one and set a new target.
+        if (Vector3.Distance(unit.transform.position, points[idx]) < 0.2f)
+        {
+            // Switch to the other patrol point.
+            idx = 1 - idx;
+            _patrolTargetIndex[unit] = idx;
+            // Pick a new random patrol point.
+            points[idx] = GetRandomPatrolPoint(unit.transform.position);
+            // Set the new patrol target.
+            unit.SetTarget(points[idx]);
+        }
+        // Only set a new target if the unit is not already moving (prevents resetting the path every frame).
+        else if (!unit.IsMoving)
+        {
+            unit.SetTarget(points[idx]);
+        }
+    }
+
+    // Finds the nearest enemy unit within detection range.
+    private UnitInstance FindNearestEnemy(UnitInstance unit, List<UnitInstance> enemyUnits)
+    {
+        float minDist = detectionRange;
+        UnitInstance nearest = null;
+        foreach (UnitInstance enemy in enemyUnits)
+        {
+            if (enemy == null) continue;
+            float dist = Vector3.Distance(unit.transform.position, enemy.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = enemy;
+            }
+        }
+        return nearest;
+    }
+
+    // Draws each unit's current path as a gizmo in a unique color per army.
+    private void OnDrawGizmos()
+    {
+        // Loop through all armies.
+        for (int armyIdx = 0; armyIdx < _armies.Count; armyIdx++)
+        {
+            ArmyManager army = _armies[armyIdx];
+            // Pick a color for this army.
+            Color color = ArmyColors[armyIdx % ArmyColors.Length];
+            // Loop through all units in the army.
+            foreach (UnitInstance unit in army.Units)
+            {
+                if (unit == null || unit.CurrentPath == null || unit.CurrentPath.Count < 2)
+                    continue;
+                // Set gizmo color for this army.
+                Gizmos.color = color;
+                // Draw lines between each node in the path.
+                for (int i = 0; i < unit.CurrentPath.Count - 1; i++)
+                {
+                    Gizmos.DrawLine(unit.CurrentPath[i].WorldPosition, unit.CurrentPath[i + 1].WorldPosition);
+                }
+            }
+        }
+    }
 }
