@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: U_Spearman
   m_EditorClassIdentifier: 
   _health: 100
-  _movementSpeed: 5
+  _movementSpeed: 2
   _range: 3
   _damage: 35
   _attackType: 0

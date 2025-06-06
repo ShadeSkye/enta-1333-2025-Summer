@@ -153,6 +153,9 @@ MonoBehaviour:
   armyCompositions:
   - {fileID: 11400000, guid: 3768d3a6828a85f47bdd190079ec7f56, type: 2}
   - {fileID: 11400000, guid: 19eb8b75ccd5e9a4ab8a23f8979060cd, type: 2}
+  armyMaterials:
+  - {fileID: 2100000, guid: 792a4bad9e08b8e41bfbd3f0b8aac1ab, type: 2}
+  - {fileID: 2100000, guid: 98a7fdcb4ebb44344b4afe0424d44b82, type: 2}
   patrolRange: 8
   detectionRange: 4
 --- !u!4 &162213174
@@ -1356,6 +1359,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gridManager: {fileID: 1808984559}
   dummy: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
+  teamMaterials:
+  - {fileID: 2100000, guid: 792a4bad9e08b8e41bfbd3f0b8aac1ab, type: 2}
+  - {fileID: 2100000, guid: 98a7fdcb4ebb44344b4afe0424d44b82, type: 2}
 --- !u!4 &1902663319
 Transform:
   m_ObjectHideFlags: 0

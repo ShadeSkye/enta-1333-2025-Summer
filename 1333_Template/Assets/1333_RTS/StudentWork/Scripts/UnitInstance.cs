@@ -30,9 +30,9 @@ public class UnitInstance : UnitBase
         _pathfinder = pathfinder;
         _unitType = unitType;
 
-        foreach (SkinnedMeshRenderer skin in _unitSkin.GetComponentsInChildren<SkinnedMeshRenderer>())
+        foreach(Renderer renderer in _unitSkin.GetComponentsInChildren<Renderer>())
         {
-            //change materials to match team
+            
         }
     }
 
@@ -102,5 +102,14 @@ public class UnitInstance : UnitBase
         _currentPath.Clear();
         _pathIndex = 0;
         State = UnitState.Nothing;
+    }
+
+    public void SetTeamMaterial(Material teamMaterial)
+    {
+        foreach (SkinnedMeshRenderer skinRenderer in _unitSkin.GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            //assign the team material to each renderer
+            skinRenderer.material = teamMaterial;
+        }
     }
 }

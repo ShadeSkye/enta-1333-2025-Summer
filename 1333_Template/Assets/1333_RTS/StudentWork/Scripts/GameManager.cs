@@ -9,8 +9,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Pathfinder pathfinder;
     [SerializeField] private Transform startMarker;
     [SerializeField] private Transform endMarker;
-    /*[SerializeField] Vector2Int startMarker;
-    [SerializeField] Vector2Int endMarker;*/
     [SerializeField] private LineRenderer pathLine;
     [SerializeField] private float markerHeight = 0.5f;
 
@@ -24,14 +22,11 @@ public class GameManager : MonoBehaviour
         }
 
         gridManager.InitializeGrid();
-        //unitManager.SpawnDummyUnit(startMarker);
-        //unitManager.SpawnDummyUnit(endMarker);
 
     }
 
     private bool ValidateReferences()
     {
-        //if (!gridManager || !pathfinder || !startMarker || !endMarker || !pathLine)
         if (!gridManager || !pathfinder || !pathLine)
         {
             return false; 
@@ -53,7 +48,6 @@ public class GameManager : MonoBehaviour
         RandomizeAll();
 
         var path = pathfinder.FindPath(gridManager.GetNodeFromWorldPosition(startMarker.position), gridManager.GetNodeFromWorldPosition(endMarker.position));
-        //Debug.Log(path.Count);
         string message = $"Path found: {path.Count} steps. Start at {startMarker}, end at {endMarker}.";
         foreach(var p in path)
         {
@@ -61,7 +55,6 @@ public class GameManager : MonoBehaviour
         }
 
         message += $" > end at {endMarker}";
-        //Debug.Log(message);
     }
 
     private void RandomizeAll()

@@ -8,6 +8,7 @@ public class ArmyPathfindingTester : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Pathfinder pathfinder;
     [SerializeField] private List<ArmyComposition> armyCompositions = new();
+    [SerializeField] private List<Material> armyMaterials;
     [SerializeField] private int patrolRange = 8;
     [SerializeField] private float detectionRange = 4f;
 
@@ -73,6 +74,9 @@ public class ArmyPathfindingTester : MonoBehaviour
                 UnitInstance unit = go.GetComponent<UnitInstance>();
                 // Initialize the unit with its pathfinder and type.
                 unit.Initialize(pathfinder, entry.unitTypePrefab.unitType);
+
+                int materialIndex = (army.ArmyID - 1) % armyMaterials.Count;
+                unit.SetTeamMaterial(armyMaterials[materialIndex]);
                 // Add to the army's unit list.
                 army.Units.Add(unit);
                 // Initialize state to Patrol.
