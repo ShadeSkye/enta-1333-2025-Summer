@@ -18,7 +18,6 @@ public class UnitInstance : UnitBase
     private int _pathIndex = 0;
     private Vector3? _targetWorldPosition = null;
     private bool _isMoving = false;
-    private new UnitType _unitType;
 
    
     public bool IsMoving => _isMoving;
@@ -41,7 +40,12 @@ public class UnitInstance : UnitBase
     {
         
         if (!_isMoving || _currentPath == null || _currentPath.Count == 0 || _pathIndex >= _currentPath.Count)
+        {
+            if(State == UnitState.Moving)
+                State = UnitState.Nothing; //reset state when done moving
             return;
+        }
+            
 
         
         Vector3 nextWaypoint = _currentPath[_pathIndex].WorldPosition;
@@ -89,5 +93,14 @@ public class UnitInstance : UnitBase
     public override void MoveTo(GridNode targetNode)
     {
         SetTarget(targetNode);
+        State = UnitState.Moving;
+    }
+
+    public void StopMoving()
+    {
+        _isMoving = false;
+        _currentPath.Clear();
+        _pathIndex = 0;
+        State = UnitState.Nothing;
     }
 }

@@ -98,8 +98,8 @@ public class ArmyPathfindingTester : MonoBehaviour
         int y = Mathf.Clamp(Random.Range(nodeY - patrolRange, nodeY + patrolRange), 0, gridManager.GridSettings.GridSizeY - 1);
         for (int tries = 0; tries < 20; tries++)
         {
-            int tryX = Mathf.Clamp(x + Random.Range(-patrolRange, patrolRange), 0, gridManager.GridSettings.GridSizeX);
-            int tryY = Mathf.Clamp(y + Random.Range(-patrolRange, patrolRange), 0, gridManager.GridSettings.GridSizeY);
+            int tryX = Mathf.Clamp(x + Random.Range(-patrolRange, patrolRange), 0, gridManager.GridSettings.GridSizeX - 1);
+            int tryY = Mathf.Clamp(y + Random.Range(-patrolRange, patrolRange), 0, gridManager.GridSettings.GridSizeY - 1);
             
             return gridManager.GetNode(tryX, tryY).WorldPosition;
         }

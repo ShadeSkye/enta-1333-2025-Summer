@@ -6,6 +6,7 @@ public class UnitManager : MonoBehaviour
 {
     [SerializeField] private GridManager _gridManager;
     [SerializeField] private GameObject dummy;
+    [SerializeField] private Material[] teamMaterials;
 
     private Dictionary<int, ArmyManager> _armyManager;
 

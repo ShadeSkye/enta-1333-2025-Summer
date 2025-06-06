@@ -10,6 +10,11 @@ public class ArmyManager
     public int ArmyID;
 
     /// <summary>
+    /// needed for changing unit materials
+    /// </summary>
+    public Material TeamMaterial;
+
+    /// <summary>
     /// returns true if player army
     /// </summary>
     public bool IsPlayer => ArmyID == 0;
