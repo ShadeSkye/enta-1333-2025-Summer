@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f00a19ad3f3d89f43ba5651b2f4d0554, type: 3}
+  m_Name: BuildingTypes
+  m_EditorClassIdentifier: 
+  Buildings:
+  - BuildingName: Barracks
+    Icon: {fileID: 0}
+    Cost: 0
+    Width: 2
+    Length: 2
+  - BuildingName: Town Hall
+    Icon: {fileID: 0}
+    Cost: 0
+    Width: 3
+    Length: 3
+  - BuildingName: Wall
+    Icon: {fileID: 0}
+    Cost: 0
+    Width: 1
+    Length: 1

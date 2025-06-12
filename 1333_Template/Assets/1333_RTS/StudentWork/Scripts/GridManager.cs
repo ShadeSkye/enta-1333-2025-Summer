@@ -140,4 +140,17 @@ public class GridManager : MonoBehaviour
     {
         return x >= 0 && x < gridSettings.GridSizeX && y >= 0 && y < gridSettings.GridSizeY;
     }
+
+    private bool IsEmpty()
+    {
+        BuildingData data = CurrentlySelectedBuilding.GetCurrentBuilding();
+        for(int x = 0; x < data.Width; x++)
+        {
+            for(int y = 0; y < data.Length; y++)
+            {
+                //if(GetNodeFromWorldPosition(new Vector3(x, 0, y) + mousepos))
+            }
+        }
+        return false;
+    }
 }
