@@ -96,13 +96,29 @@ public class GridManager : MonoBehaviour
         PopulateDebugList();
     }
 
-    public GridNode GetNodeFromWorldPosition(Vector3 position)
+    /*public GridNode GetNodeFromWorldPosition(Vector3 position)
     {
-        int x = gridSettings.UseXZPlane ? Mathf.RoundToInt(position.x / gridSettings.NodeSize) : Mathf.RoundToInt(position.x / gridSettings.NodeSize);
-        int y = gridSettings.UseXZPlane ? Mathf.RoundToInt(position.z / gridSettings.NodeSize) : Mathf.RoundToInt(position.z / gridSettings.NodeSize);
+        int x = gridSettings.UseXZPlane
+            ? Mathf.FloorToInt(position.x / gridSettings.NodeSize)
+            : Mathf.FloorToInt(position.x / gridSettings.NodeSize);
+
+        int y = gridSettings.UseXZPlane
+            ? Mathf.FloorToInt(position.z / gridSettings.NodeSize)
+            : Mathf.FloorToInt(position.z / gridSettings.NodeSize);
 
         x = Mathf.Clamp(x, 0, gridSettings.GridSizeX - 1);
-        y = Mathf.Clamp(y, 0, gridSettings .GridSizeY - 1);
+        y = Mathf.Clamp(y, 0, gridSettings.GridSizeY - 1);
+
+        return GetNode(x, y);
+    }*/
+
+    public GridNode GetNodeFromWorldPosition(Vector3 position)
+    {
+        int x = Mathf.FloorToInt(position.x / gridSettings.NodeSize);
+        int y = Mathf.FloorToInt(position.z / gridSettings.NodeSize); // because we use XZ plane
+
+        x = Mathf.Clamp(x, 0, gridSettings.GridSizeX - 1);
+        y = Mathf.Clamp(y, 0, gridSettings.GridSizeY - 1);
 
         return GetNode(x, y);
     }
@@ -141,16 +157,67 @@ public class GridManager : MonoBehaviour
         return x >= 0 && x < gridSettings.GridSizeX && y >= 0 && y < gridSettings.GridSizeY;
     }
 
-    private bool IsEmpty()
+    /*public Vector2Int GetCoordinatesFromNode(GridNode node)
     {
-        BuildingData data = CurrentlySelectedBuilding.GetCurrentBuilding();
-        for(int x = 0; x < data.Width; x++)
+        for (int x = 0; x < gridSettings.GridSizeX; x++)
         {
-            for(int y = 0; y < data.Length; y++)
+            for (int y = 0; y < gridSettings.GridSizeY; y++)
             {
-                //if(GetNodeFromWorldPosition(new Vector3(x, 0, y) + mousepos))
+                if (gridNodes[x, y].WorldPosition == node.WorldPosition)
+                    return new Vector2Int(x, y);
             }
         }
-        return false;
+        return Vector2Int.zero; // Or throw exception if not found
+    }*/
+
+    public Vector2Int GetCoordinatesFromNode(GridNode node)
+    {
+        int x = Mathf.RoundToInt(node.WorldPosition.x / gridSettings.NodeSize);
+        int y = Mathf.RoundToInt(node.WorldPosition.z / gridSettings.NodeSize);
+
+        x = Mathf.Clamp(x, 0, gridSettings.GridSizeX - 1);
+        y = Mathf.Clamp(y, 0, gridSettings.GridSizeY - 1);
+
+        return new Vector2Int(x, y);
     }
+
+    public bool CanPlaceBuilding(int startX, int startY, BuildingData building)
+    {
+        //Debug.Log($"Trying to place building '{building.BuildingName}' at {startX}, {startY} with size {building.Width}x{building.Length}");
+
+        if (startX < 0 || startY < 0 ||
+            startX + building.Width > gridSettings.GridSizeX ||
+            startY + building.Length > gridSettings.GridSizeY)
+        {
+            Debug.LogWarning("Placement out of bounds: Building footprint extends outside grid.");
+            return false;
+        }
+
+        for (int x = 0; x < building.Width; x++)
+        {
+            for (int y = 0; y < building.Length; y++)
+            {
+                int checkX = startX + x;
+                int checkY = startY + y;
+
+                if (checkX < 0 || checkY < 0 || checkX >= gridSettings.GridSizeX || checkY >= gridSettings.GridSizeY)
+                {
+                    Debug.LogWarning($"Placement failed: Node ({checkX}, {checkY}) is out of bounds.");
+                    return false;
+                }
+
+                GridNode node = gridNodes[checkX, checkY];
+
+                if (!node.Walkable || node.BuildingData != null)
+                {
+                    Debug.LogWarning($"Placement failed: Node ({checkX}, {checkY}) is occupied or not walkable.");
+                    return false;
+                }
+            }
+        }
+
+        //Debug.Log("Placement is valid.");
+        return true;
+    }
+
 }

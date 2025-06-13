@@ -16,15 +16,7 @@ MonoBehaviour:
   - BuildingName: Barracks
     Icon: {fileID: 0}
     Cost: 0
-    Width: 2
-    Length: 2
-  - BuildingName: Town Hall
-    Icon: {fileID: 0}
-    Cost: 0
-    Width: 3
-    Length: 3
-  - BuildingName: Wall
-    Icon: {fileID: 0}
-    Cost: 0
-    Width: 1
-    Length: 1
+    Width: 7
+    Length: 7
+    BuildingPrefab: {fileID: 1718738630495933002, guid: 3cb175b925bb23a40bb5b700ad45ec90, type: 3}
+    BuildingPrefabGhost: {fileID: 8282906978614631426, guid: 633c1476080ae5349935853cc635bdbb, type: 3}

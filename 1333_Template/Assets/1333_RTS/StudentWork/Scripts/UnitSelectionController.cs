@@ -5,7 +5,6 @@ using UnityEngine;
 public class UnitSelectionController : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GridManager gridManager;
 
     private UnitInstance selectedUnit;
@@ -18,7 +17,13 @@ public class UnitSelectionController : MonoBehaviour
             TrySelectUnit();
         }
 
-        // Move selected unit on left-click if a unit is selected
+        // Deselect unit on right-click
+        if (Input.GetMouseButtonDown(1))
+        {
+            DeselectUnit();
+        }
+
+        // Move selected unit on left-click if already selected
         if (selectedUnit != null && Input.GetMouseButtonDown(0))
         {
             TryMoveUnit();
@@ -46,11 +51,14 @@ public class UnitSelectionController : MonoBehaviour
     {
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
-        {
-            Vector3 hitPoint = hit.point;
-            GridNode targetNode = gridManager.GetNodeFromWorldPosition(hitPoint);
+        // Create a horizontal plane at Y = 0 (ground level)
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
+        if (groundPlane.Raycast(ray, out float enter))
+        {
+            Vector3 hitPoint = ray.GetPoint(enter);
+
+            GridNode targetNode = gridManager.GetNodeFromWorldPosition(hitPoint);
             if (IsValidNode(targetNode))
             {
                 selectedUnit.MoveTo(targetNode);
@@ -67,5 +75,14 @@ public class UnitSelectionController : MonoBehaviour
     {
         // You can enhance this check depending on your GridNode design
         return node.Walkable && node.WorldPosition != Vector3.zero;
+    }
+
+    private void DeselectUnit()
+    {
+        if (selectedUnit != null)
+        {
+            Debug.Log($"Deselected unit: {selectedUnit.name}");
+            selectedUnit = null;
+        }
     }
 }

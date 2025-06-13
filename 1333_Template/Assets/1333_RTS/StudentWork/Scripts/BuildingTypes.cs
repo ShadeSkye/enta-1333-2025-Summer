@@ -16,4 +16,6 @@ public class BuildingData
     public int Cost;
     public int Width;
     public int Length;
+    public GameObject BuildingPrefab;
+    public GameObject BuildingPrefabGhost;
 }
