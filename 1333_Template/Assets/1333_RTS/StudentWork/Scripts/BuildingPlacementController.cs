@@ -22,6 +22,19 @@ public class BuildingPlacementController : MonoBehaviour
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CurrentlySelectedBuilding.ClearSelection();
+
+            if (currentGhost != null)
+            {
+                Destroy(currentGhost);
+                currentGhost = null;
+            }
+
+            return;
+        }
+
         Vector3 mouseWorldPos = GetMouseWorldPosition();
 
         // Convert mouse position to grid coords (bottom-left corner)
