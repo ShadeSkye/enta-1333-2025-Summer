@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db7701841e59eb45bdc6bd18f24f170, type: 3}
   m_Name: SO_GridSettings
   m_EditorClassIdentifier: 
-  gridSizeX: 10
-  gridSizeY: 10
+  gridSizeX: 50
+  gridSizeY: 50
   nodeSize: 1
   useXZPlane: 1
   defaultTerrainType: {fileID: 11400000, guid: 340263a899971bb41bc670fe5b08fe4c, type: 2}

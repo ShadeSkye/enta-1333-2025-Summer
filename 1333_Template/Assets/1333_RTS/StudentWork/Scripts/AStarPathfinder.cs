@@ -38,10 +38,10 @@ public class AStarPathfinder : PathfindingAlgorithm
 
     public List<GridNode> FindPath(GridManager gridManager, GridNode start, GridNode end)
     {
-        Debug.Log("Finding path");
+        //Debug.Log("Finding path");
 
-        Debug.Log(start.Name);
-        Debug.Log(end.Name);
+        //Debug.Log(start.Name);
+        //Debug.Log(end.Name);
 
         // preparing data structures
         List<GridNode> openSet = new List<GridNode>();
@@ -68,7 +68,7 @@ public class AStarPathfinder : PathfindingAlgorithm
             // stops if end node is reached
             if (current.Equals(end))
             {
-                Debug.LogWarning("Got to the end");
+                //Debug.LogWarning("Got to the end");
                 break;
 
             }
@@ -78,7 +78,7 @@ public class AStarPathfinder : PathfindingAlgorithm
             // explores sorrounding grids
             foreach (GridNode neighbor in GetNeighbors(gridManager, current))
             {
-                Debug.Log($"Searching neighbours of {current.WorldPosition}");
+                //Debug.Log($"Searching neighbours of {current.WorldPosition}");
 
                 if (!IsAreaWalkable(gridManager, neighbor))
                 {
@@ -87,7 +87,7 @@ public class AStarPathfinder : PathfindingAlgorithm
                 }
                 else
                 {
-                    Debug.Log("It is walkable");
+                    //Debug.Log("It is walkable");
                 }
 
                 int newCost = costSoFar[current] + neighbor.Weight;
@@ -101,7 +101,7 @@ public class AStarPathfinder : PathfindingAlgorithm
 
                     if (!openSet.Contains(neighbor))
                     {
-                        Debug.Log("ADDING TO OPEN SET");
+                        //Debug.Log("ADDING TO OPEN SET");
                         openSet.Add(neighbor);
                     }
 
@@ -129,7 +129,7 @@ public class AStarPathfinder : PathfindingAlgorithm
 
         path.Reverse();
 
-        Debug.Log(path.Count);
+        //Debug.Log(path.Count);
 
         return path;
     }

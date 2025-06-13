@@ -4,6 +4,10 @@ using UnityEngine;
 
 public abstract class UnitBase : MonoBehaviour
 {
+
+    /// <summary>
+    /// unit type (SO with data)
+    /// </summary>
     [SerializeField] protected UnitType _unitType;
 
     public abstract void MoveTo(GridNode targetNode);
