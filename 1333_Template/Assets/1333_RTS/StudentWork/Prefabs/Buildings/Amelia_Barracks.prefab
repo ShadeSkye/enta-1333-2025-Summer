@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Amelia_Barracks
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
+      propertyPath: m_TagString
+      value: Building
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -55,5 +59,66 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7593716595810386086}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3859605772094774428}
   m_SourcePrefab: {fileID: 100100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
+--- !u!1 &1718738630495933002 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
+  m_PrefabInstance: {fileID: 1718738630495835370}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-7593716595810386086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718738630495933002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123ce6a849bad384c9ad4f90da75fb36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingData:
+    BuildingName: Barracks
+    Icon: {fileID: 0}
+    Cost: 0
+    Width: 7
+    Length: 7
+    BuildingPrefab: {fileID: 0}
+    BuildingPrefabGhost: {fileID: 0}
+    CanSpawnUnits: 1
+    SpawnableUnits:
+    - unitType: {fileID: 11400000, guid: 856b9c917073ea84796ea7f0111d9a73, type: 2}
+      unitPrefab: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
+    - unitType: {fileID: 11400000, guid: 92eb4583a1c29604ba6b912bd65083ce, type: 2}
+      unitPrefab: {fileID: 1330097870405763816, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
+    SpawnCooldown: 2
+  gridManager: {fileID: 0}
+  pathfinder: {fileID: 0}
+--- !u!65 &-3859605772094774428
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718738630495933002}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7, y: 7, z: 5}
+  m_Center: {x: 0, y: 0, z: 2}

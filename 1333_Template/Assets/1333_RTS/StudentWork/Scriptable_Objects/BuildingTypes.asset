@@ -20,3 +20,10 @@ MonoBehaviour:
     Length: 7
     BuildingPrefab: {fileID: 1718738630495933002, guid: 3cb175b925bb23a40bb5b700ad45ec90, type: 3}
     BuildingPrefabGhost: {fileID: 8282906978614631426, guid: 633c1476080ae5349935853cc635bdbb, type: 3}
+    CanSpawnUnits: 1
+    SpawnableUnits:
+    - unitType: {fileID: 11400000, guid: 92eb4583a1c29604ba6b912bd65083ce, type: 2}
+      unitPrefab: {fileID: 1330097870405763816, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
+    - unitType: {fileID: 11400000, guid: 856b9c917073ea84796ea7f0111d9a73, type: 2}
+      unitPrefab: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
+    SpawnCooldown: 2

@@ -133,6 +133,7 @@ public class BuildingPlacementController : MonoBehaviour
 
                 GridNode node = gridManager.GetNode(startX + x, startY + y);
                 node.BuildingData = building;
+                node.Walkable = false;
                 gridManager.gridNodes[startX + x, startY + y] = node;
             }
         }
@@ -155,6 +156,21 @@ public class BuildingPlacementController : MonoBehaviour
 
         GameObject buildingGO = Instantiate(building.BuildingPrefab, spawnPos, Quaternion.Euler(-90f, currentRotation, 0f));
         buildingGO.transform.localScale = Vector3.one;
+
+        if (building.CanSpawnUnits)
+        {
+            var spawner = buildingGO.GetComponent<BarracksSpawner>();
+            if (spawner == null)
+            {
+                Debug.LogError("BarracksSpawner component missing from building prefab!");
+                return;
+            }
+
+            spawner.buildingData = building;
+            spawner.gridManager = gridManager;
+            spawner.pathfinder = FindAnyObjectByType<Pathfinder>();
+            spawner.armyManager = FindAnyObjectByType<PlayerArmyManager>()?.ArmyManagerRef;
+        }
     }
 
     private void SetGhostColor(Color color)
@@ -180,5 +196,25 @@ public class BuildingPlacementController : MonoBehaviour
             return (building.Width, building.Length);
         else
             return (building.Length, building.Width);
+    }
+
+    private Vector3 GetClosestFreeNode(Vector3 origin)
+    {
+        GridNode start = gridManager.GetNodeFromWorldPosition(origin);
+        float bestDist = float.MaxValue;
+        GridNode bestNode = default;  // Use default instead of null
+        bool found = false;
+
+        foreach (var node in gridManager.GetAllNodes())
+        {
+            if (node.Walkable && Vector3.Distance(origin, node.WorldPosition) < bestDist)
+            {
+                bestDist = Vector3.Distance(origin, node.WorldPosition);
+                bestNode = node;
+                found = true;
+            }
+        }
+
+        return found ? bestNode.WorldPosition : Vector3.zero;
     }
 }

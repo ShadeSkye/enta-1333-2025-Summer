@@ -17,4 +17,6 @@ MonoBehaviour:
   _range: 10
   _damage: 20
   _attackType: 1
+  _name: Archer
+  _icon: {fileID: 0}
   _unitPrefab: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
