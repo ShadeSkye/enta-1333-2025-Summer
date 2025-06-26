@@ -18,4 +18,7 @@ public class BuildingData
     public int Length;
     public GameObject BuildingPrefab;
     public GameObject BuildingPrefabGhost;
+    public bool CanSpawnUnits;
+    public List<UnitTypePrefab> SpawnableUnits;
+    public float SpawnCooldown = 2f;
 }

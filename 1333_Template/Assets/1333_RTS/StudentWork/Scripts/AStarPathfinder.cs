@@ -27,12 +27,17 @@ public class AStarPathfinder : PathfindingAlgorithm
         return neighbors;
     }
 
+    /* private bool IsAreaWalkable(GridManager gridManager, GridNode node)
+     {
+         float nodeSize = gridManager.GridSettings.NodeSize;
+         int x = Mathf.RoundToInt(node.WorldPosition.x / nodeSize);
+         int y = Mathf.RoundToInt(node.WorldPosition.z / nodeSize);
+         return true;
+     }*/
+
     private bool IsAreaWalkable(GridManager gridManager, GridNode node)
     {
-        float nodeSize = gridManager.GridSettings.NodeSize;
-        int x = Mathf.RoundToInt(node.WorldPosition.x / nodeSize);
-        int y = Mathf.RoundToInt(node.WorldPosition.z / nodeSize);
-        return true;
+        return node.Walkable;
     }
 
 

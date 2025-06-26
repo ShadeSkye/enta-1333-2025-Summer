@@ -15,4 +15,14 @@ public class CurrentlySelectedBuilding
     {
         CurrentBuilding = buildingData;
     }
+
+    public static void ClearSelection()
+    {
+        CurrentBuilding = null;
+    }
+
+    public static bool HasSelection()
+    {
+        return CurrentBuilding != null;
+    }
 }

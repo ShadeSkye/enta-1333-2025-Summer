@@ -34,6 +34,7 @@ public class GridManager : MonoBehaviour
                 {
                     Name = $"Cell_{(x + gridSettings.GridSizeX * x) + y}",
                     WorldPosition = worldPos,
+                    TerrainType = terrain,
                     Walkable = terrain.Walkable,
                     Weight = terrain.Weight,
                     GizmoColor = terrain.GizmoColor
@@ -220,4 +221,14 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
+    public IEnumerable<GridNode> GetAllNodes()
+    {
+        for (int x = 0; x < GridSettings.GridSizeX; x++)
+        {
+            for (int y = 0; y < GridSettings.GridSizeY; y++)
+            {
+                yield return gridNodes[x, y];
+            }
+        }
+    }
 }
