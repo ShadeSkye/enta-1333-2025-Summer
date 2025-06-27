@@ -18,6 +18,8 @@ MonoBehaviour:
     Cost: 0
     Width: 7
     Length: 7
+    Health: 500
+    Capacity: 0
     BuildingPrefab: {fileID: 1718738630495933002, guid: 3cb175b925bb23a40bb5b700ad45ec90, type: 3}
     BuildingPrefabGhost: {fileID: 8282906978614631426, guid: 633c1476080ae5349935853cc635bdbb, type: 3}
     CanSpawnUnits: 1
@@ -32,6 +34,8 @@ MonoBehaviour:
     Cost: 0
     Width: 8
     Length: 8
+    Health: 1000
+    Capacity: 10
     BuildingPrefab: {fileID: 7426707252846773150, guid: 5bc30da405604a04481747aa1515fe39, type: 3}
     BuildingPrefabGhost: {fileID: 7627717441207553902, guid: d6f51c8a9ba64cf40a73524d08a196cc, type: 3}
     CanSpawnUnits: 0
@@ -42,6 +46,8 @@ MonoBehaviour:
     Cost: 0
     Width: 7
     Length: 7
+    Health: 500
+    Capacity: 0
     BuildingPrefab: {fileID: 7672353212601233078, guid: f8195bc351caf0a45b9a487a47ec6786, type: 3}
     BuildingPrefabGhost: {fileID: 1591802072455685551, guid: 9026a5717bce8ee488f8b1f381d86a74, type: 3}
     CanSpawnUnits: 0
@@ -52,6 +58,8 @@ MonoBehaviour:
     Cost: 0
     Width: 7
     Length: 7
+    Health: 500
+    Capacity: 0
     BuildingPrefab: {fileID: 8697515659534108560, guid: 3b87b755ddd0c5946a125f1b66713f5e, type: 3}
     BuildingPrefabGhost: {fileID: 257471978987613947, guid: 754de2771dc859c4cbda44dbed6c4ea3, type: 3}
     CanSpawnUnits: 0
@@ -62,6 +70,8 @@ MonoBehaviour:
     Cost: 0
     Width: 4
     Length: 4
+    Health: 250
+    Capacity: 0
     BuildingPrefab: {fileID: 6275624757920761066, guid: bd94dfb0b7a9cc44b9fe0e7a4060df75, type: 3}
     BuildingPrefabGhost: {fileID: 8394621345395990737, guid: a29ee67b01993294cb6beb164029d0f2, type: 3}
     CanSpawnUnits: 0
@@ -72,6 +82,8 @@ MonoBehaviour:
     Cost: 0
     Width: 7
     Length: 7
+    Health: 500
+    Capacity: 0
     BuildingPrefab: {fileID: 3379539972008378553, guid: 8fdc72d5e9a3fd747ac97cebf3576d0e, type: 3}
     BuildingPrefabGhost: {fileID: 2122512771048503597, guid: ce675a10060e8e944a7d66e2856d7243, type: 3}
     CanSpawnUnits: 0

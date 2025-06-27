@@ -16,6 +16,8 @@ public class BuildingData
     public int Cost;
     public int Width;
     public int Length;
+    public int Health;
+    public int Capacity;
     public GameObject BuildingPrefab;
     public GameObject BuildingPrefabGhost;
     public bool CanSpawnUnits;

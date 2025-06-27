@@ -19,4 +19,4 @@ MonoBehaviour:
   _attackType: 0
   _name: Spearman
   _icon: {fileID: 0}
-  _unitPrefab: {fileID: 1330097870405763816, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
+  _unitPrefab: {fileID: 6267393893586642548, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}

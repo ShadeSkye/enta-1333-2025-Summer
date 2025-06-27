@@ -15,36 +15,7 @@ public class BarracksSpawner : MonoBehaviour
     {
         if (buildingData == null || !buildingData.CanSpawnUnits || buildingData.SpawnableUnits.Count == 0)
             return;
-
-        /*spawnTimer += Time.deltaTime;
-        if (spawnTimer >= buildingData.SpawnCooldown)
-        {
-            spawnTimer = 0f;
-            TrySpawnUnit();
-        }*/
     }
-
-    /*private void TrySpawnUnit()
-    {
-        Vector3 spawnPos = GetClosestFreeNode(transform.position);
-        if (spawnPos == Vector3.zero) return;
-
-        UnitTypePrefab typeToSpawn = buildingData.SpawnableUnits[Random.Range(0, buildingData.SpawnableUnits.Count)];
-        Quaternion spawnRotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
-        GameObject go = Instantiate(typeToSpawn.unitPrefab, spawnPos, spawnRotation);
-
-        UnitInstance unit = go.GetComponent<UnitInstance>();
-        if (unit == null)
-        {
-            Debug.LogError("Spawned unit prefab missing UnitInstance component!");
-            Destroy(go);
-            return;
-        }
-
-        unit.Initialize(pathfinder, typeToSpawn.unitType);
-        unit.SetTeamMaterial(armyManager.TeamMaterial);
-        armyManager.Units.Add(unit);
-    }*/
 
     public void SpawnUnit(UnitTypePrefab unitTypePrefab)
     {
