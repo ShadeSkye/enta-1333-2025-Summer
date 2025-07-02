@@ -23,13 +23,13 @@ public abstract class UnitBase : MonoBehaviour
                 break;
 
             case UnitState.Attacking:
-
+                HandleAttack();
                 break;
         }
     }
 
-    public virtual void DoMove()
+    protected virtual void HandleAttack()
     {
-
+        // Base does nothing
     }
 }

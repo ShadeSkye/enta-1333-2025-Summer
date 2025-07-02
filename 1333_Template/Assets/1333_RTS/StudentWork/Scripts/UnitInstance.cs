@@ -11,13 +11,18 @@ public class UnitInstance : UnitBase
     [SerializeField] private Animator _characterAnimator;
     [SerializeField] private GameObject _unitSkin;
     [SerializeField] private ParticleSystem _hurtParticles;
-    
+    [SerializeField] private float _attackCooldown = 1.5f;
 
+
+    private float _lastAttackTime = 0f;
+    private UnitInstance _targetEnemy;
+    private int _currentHealth;
     private Pathfinder _pathfinder;
     private List<GridNode> _currentPath = new List<GridNode>();
     private int _pathIndex = 0;
     private Vector3? _targetWorldPosition = null;
     private bool _isMoving = false;
+    public bool PlayerTeam;
 
    
     public bool IsMoving => _isMoving;
@@ -29,11 +34,7 @@ public class UnitInstance : UnitBase
     {
         _pathfinder = pathfinder;
         _unitType = unitType;
-
-        foreach(Renderer renderer in _unitSkin.GetComponentsInChildren<Renderer>())
-        {
-            
-        }
+        _currentHealth = unitType.Health;
     }
 
     private void Update()
@@ -104,12 +105,90 @@ public class UnitInstance : UnitBase
         State = UnitState.Nothing;
     }
 
+    /*public void SetTeamMaterial(Material teamMaterial)
+    {
+        // Update all Renderer types under the unit skin
+        foreach (Renderer renderer in _unitSkin.GetComponentsInChildren<Renderer>(true))
+        {
+            Material[] newMats = new Material[renderer.sharedMaterials.Length];
+            for (int i = 0; i < newMats.Length; i++)
+            {
+                newMats[i] = teamMaterial;
+            }
+            renderer.materials = newMats;
+        }
+    }*/
+
     public void SetTeamMaterial(Material teamMaterial)
     {
-        foreach (SkinnedMeshRenderer skinRenderer in _unitSkin.GetComponentsInChildren<SkinnedMeshRenderer>())
+        foreach (Renderer renderer in _unitSkin.GetComponentsInChildren<Renderer>(true))
         {
-            //assign the team material to each renderer
-            skinRenderer.material = teamMaterial;
+            int matCount = renderer.sharedMaterials.Length;
+
+            Material[] newMats = new Material[matCount];
+            for (int i = 0; i < matCount; i++)
+            {
+                newMats[i] = teamMaterial;
+            }
+
+            renderer.materials = newMats;
         }
+    }
+
+    public void TryFindTarget(List<UnitInstance> enemyUnits)
+    {
+        foreach (var enemy in enemyUnits)
+        {
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
+
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance <= _unitType.Range)
+            {
+                _targetEnemy = enemy;
+                State = UnitState.Attacking;
+                break;
+            }
+        }
+    }
+
+    protected override void HandleAttack()
+    {
+        if (_targetEnemy == null)
+        {
+            State = UnitState.Nothing;
+            return;
+        }
+
+        float distance = Vector3.Distance(transform.position, _targetEnemy.transform.position);
+        if (distance > _unitType.Range)
+        {
+            State = UnitState.Nothing;
+            _targetEnemy = null;
+            return;
+        }
+
+        if (Time.time - _lastAttackTime >= _attackCooldown)
+        {
+            _lastAttackTime = Time.time;
+            _targetEnemy.TakeDamage(_unitType.Damage);
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        _currentHealth -= amount;
+
+        _hurtParticles?.Play();
+
+        if (_currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        gameObject.SetActive(false); // or Destroy(gameObject)
+        State = UnitState.Dead;
     }
 }

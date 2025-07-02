@@ -41,8 +41,11 @@ public class BarracksSpawner : MonoBehaviour
         }
 
         unit.Initialize(pathfinder, unitTypePrefab.unitType);
+        unit.PlayerTeam = true;
         unit.SetTeamMaterial(armyManager.TeamMaterial);
         armyManager.Units.Add(unit);
+
+        FindObjectOfType<UnitManager>()?.RegisterUnit(unit);
 
         Debug.Log($"Spawned unit {unitTypePrefab.unitType.name} at {spawnPos}");
     }

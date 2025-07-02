@@ -4884,6 +4884,7 @@ MonoBehaviour:
   _characterAnimator: {fileID: 1954966842697616613}
   _unitSkin: {fileID: 1954966842690493415}
   _hurtParticles: {fileID: 3008311684115402232}
+  PlayerTeam: 0
 --- !u!136 &4095547807266104222
 CapsuleCollider:
   m_ObjectHideFlags: 0
