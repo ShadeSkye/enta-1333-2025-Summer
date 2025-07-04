@@ -59,6 +59,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 06905b5e993435c4e9526f63c49622e3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 134012602714118976}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: 06905b5e993435c4e9526f63c49622e3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7605508071764541913}
   m_SourcePrefab: {fileID: 100100000, guid: 06905b5e993435c4e9526f63c49622e3, type: 3}
 --- !u!1 &3379539972008378553 stripped
 GameObject:
@@ -84,5 +87,18 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.7468944, y: 6.653408, z: 3.8176866}
+  m_Size: {x: 6, y: 6, z: 4}
   m_Center: {x: 0, y: -0.036565073, z: 0.8809201}
+--- !u!114 &7605508071764541913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3379539972008378553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81c009f986fbf6e458a70b9f8120c7af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBarPrefab: {fileID: 3866543925547059583, guid: ae7ea51d0a0450d4aaa45c5ccf39a3c1, type: 3}

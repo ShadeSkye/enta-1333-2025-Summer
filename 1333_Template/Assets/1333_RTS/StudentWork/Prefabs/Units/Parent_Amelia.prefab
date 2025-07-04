@@ -4884,6 +4884,8 @@ MonoBehaviour:
   _characterAnimator: {fileID: 5788596431277380732}
   _unitSkin: {fileID: 5788596431286747794}
   _hurtParticles: {fileID: 3060631832148750231}
+  _attackCooldown: 1.5
+  _healthBarPrefab: {fileID: 3866543925547059583, guid: a9b3fb3cb15a7fe4dbfbe52c546aeb92, type: 3}
   PlayerTeam: 0
 --- !u!136 &3132810640858665097
 CapsuleCollider:

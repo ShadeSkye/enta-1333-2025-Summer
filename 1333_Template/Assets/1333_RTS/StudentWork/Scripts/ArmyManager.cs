@@ -10,6 +10,11 @@ public class ArmyManager
     public int ArmyID;
 
     /// <summary>
+    /// The enemy army that this army is fighting against
+    /// </summary>
+    public ArmyManager EnemyArmy;
+
+    /// <summary>
     /// needed for changing unit materials
     /// </summary>
     public Material TeamMaterial;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// represents a specific unit instance in the game, inherits from UnitBase
@@ -12,8 +13,11 @@ public class UnitInstance : UnitBase
     [SerializeField] private GameObject _unitSkin;
     [SerializeField] private ParticleSystem _hurtParticles;
     [SerializeField] private float _attackCooldown = 1.5f;
+    [SerializeField] private GameObject _healthBarPrefab;
 
 
+    private Image _healthBarFill;
+    private Transform _healthBar;
     private float _lastAttackTime = 0f;
     private UnitInstance _targetEnemy;
     private int _currentHealth;
@@ -23,8 +27,13 @@ public class UnitInstance : UnitBase
     private Vector3? _targetWorldPosition = null;
     private bool _isMoving = false;
     public bool PlayerTeam;
+    private float _repathInterval = 0.5f;
+    private float _lastRepathTime = 0f;
+    private Vector3? _lastTargetPosition = null;
+    private const float ArrivalRadius = 0.5f;
 
-   
+
+
     public bool IsMoving => _isMoving;
 
    
@@ -35,36 +44,36 @@ public class UnitInstance : UnitBase
         _pathfinder = pathfinder;
         _unitType = unitType;
         _currentHealth = unitType.Health;
+
+        GameObject hb = Instantiate(_healthBarPrefab, transform);
+        _healthBar = hb.transform;
+
+        _healthBar.localPosition = new Vector3(0, 2f, 0);
+
+        _healthBarFill = _healthBar.Find("HealthBarBackground/HealthBarFill").GetComponent<Image>();
     }
 
     private void Update()
     {
-        
-        if (!_isMoving || _currentPath == null || _currentPath.Count == 0 || _pathIndex >= _currentPath.Count)
-        {
-            if(State == UnitState.Moving)
-                State = UnitState.Nothing; //reset state when done moving
-            return;
-        }
-            
+        if (State == UnitState.Dead) return;
 
-        
-        Vector3 nextWaypoint = _currentPath[_pathIndex].WorldPosition;
-       
-        Vector3 direction = (nextWaypoint - transform.position).normalized;
-        float step = _unitType.MovementSpeed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, nextWaypoint, step);
-
-        
-        if (Vector3.Distance(transform.position, nextWaypoint) < 0.05f)
+        if (_targetEnemy != null && _targetEnemy.State != UnitState.Dead)
         {
-            _pathIndex++;
-            
-            if (_pathIndex >= _currentPath.Count)
+            float dist = Vector3.Distance(transform.position, _targetEnemy.transform.position);
+
+            if (dist <= _unitType.Range)
             {
-                _isMoving = false;
+                StopMoving(); // stop if close enough
+                State = UnitState.Attacking;
             }
         }
+
+        if (State == UnitState.Moving)
+        {
+            HandleMovement();
+        }
+
+        Tick();
     }
 
     /// <summary>
@@ -137,24 +146,53 @@ public class UnitInstance : UnitBase
 
     public void TryFindTarget(List<UnitInstance> enemyUnits)
     {
-        foreach (var enemy in enemyUnits)
-        {
-            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
+        UnitInstance closestTarget = null;
+        float closestDistance = Mathf.Infinity;
 
-            float distance = Vector3.Distance(transform.position, enemy.transform.position);
-            if (distance <= _unitType.Range)
+        foreach (var target in enemyUnits)
+        {
+            if (target == null || target.State == UnitState.Dead) continue;
+
+            float dist = Vector3.Distance(transform.position, target.transform.position);
+            if (dist < closestDistance)
             {
-                _targetEnemy = enemy;
-                State = UnitState.Attacking;
-                break;
+                closestDistance = dist;
+                closestTarget = target;
             }
+        }
+
+        if (closestTarget != null)
+        {
+            _targetEnemy = closestTarget;
+            // Only recalc path if target moved more than threshold or we don't have a path yet
+            if (_currentPath == null || !_lastTargetPosition.HasValue ||Vector3.Distance(_lastTargetPosition.Value, closestTarget.transform.position) > ArrivalRadius)
+            {
+                _currentPath = _pathfinder.FindPath(transform.position, closestTarget.transform.position);
+                _pathIndex = 0;
+                _isMoving = true;
+                State = UnitState.Moving;
+                _lastTargetPosition = closestTarget.transform.position;
+            }
+
+            // If close enough, switch to attack
+            if (closestDistance <= _unitType.Range)
+            {
+                State = UnitState.Attacking;
+                _isMoving = false;
+            }
+        }
+        else
+        {
+            State = UnitState.Nothing;
+            _isMoving = false;
         }
     }
 
     protected override void HandleAttack()
     {
-        if (_targetEnemy == null)
+        if (_targetEnemy == null || _targetEnemy.State == UnitState.Dead)
         {
+            _targetEnemy = null;
             State = UnitState.Nothing;
             return;
         }
@@ -162,8 +200,8 @@ public class UnitInstance : UnitBase
         float distance = Vector3.Distance(transform.position, _targetEnemy.transform.position);
         if (distance > _unitType.Range)
         {
-            State = UnitState.Nothing;
-            _targetEnemy = null;
+            State = UnitState.Moving;
+            SetTarget(_targetEnemy.transform.position); // path once again toward new position
             return;
         }
 
@@ -180,15 +218,91 @@ public class UnitInstance : UnitBase
 
         _hurtParticles?.Play();
 
+        UpdateHealthBar();
+
         if (_currentHealth <= 0)
         {
             Die();
         }
     }
 
+    private void UpdateHealthBar()
+    {
+        float healthPercent = Mathf.Clamp01((float)_currentHealth / _unitType.Health);
+        if(_healthBarFill != null)
+            _healthBarFill.fillAmount = healthPercent;
+    }
+
     private void Die()
     {
+        StopMoving();
         gameObject.SetActive(false); // or Destroy(gameObject)
         State = UnitState.Dead;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if(State == UnitState.Moving)
+        {
+            HandleMovement();
+        }
+        else if (State == UnitState.Attacking)
+        {
+            HandleAttack();
+        }
+        else if (State == UnitState.Moving && _targetEnemy != null)
+        {
+            float distance = Vector3.Distance(transform.position, _targetEnemy.transform.position);
+
+            if (distance <= _unitType.Range)
+            {
+                StopMoving();
+                State = UnitState.Attacking;
+                return;
+            }
+
+            // Recalculate path if enemy has moved or every interval
+            if (_lastTargetPosition == null ||
+                Vector3.Distance(_lastTargetPosition.Value, _targetEnemy.transform.position) > 0.5f ||
+                Time.time - _lastRepathTime >= _repathInterval)
+            {
+                SetTarget(_targetEnemy.transform.position);
+                _lastTargetPosition = _targetEnemy.transform.position;
+                _lastRepathTime = Time.time;
+            }
+        }
+    }
+
+    private void HandleMovement()
+    {
+        if (!_isMoving || _currentPath == null || _currentPath.Count == 0 || _pathIndex >= _currentPath.Count)
+        {
+            State = UnitState.Nothing; // stop moving
+            _isMoving = false;
+            return;
+        }
+
+        Vector3 nextWaypoint = _currentPath[_pathIndex].WorldPosition;
+        float distanceToWaypoint = Vector3.Distance(transform.position, nextWaypoint);
+
+        if (distanceToWaypoint <= ArrivalRadius)
+        {
+            _pathIndex++;
+
+            if (_pathIndex >= _currentPath.Count)
+            {
+                State = UnitState.Nothing;
+                _isMoving = false;
+                return;
+            }
+
+            nextWaypoint = _currentPath[_pathIndex].WorldPosition;
+        }
+
+        Vector3 direction = (nextWaypoint - transform.position).normalized;
+        float step = _unitType.MovementSpeed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, nextWaypoint, step);
     }
 }

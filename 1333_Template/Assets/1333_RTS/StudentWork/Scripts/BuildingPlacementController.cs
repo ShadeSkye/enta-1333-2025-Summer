@@ -157,6 +157,17 @@ public class BuildingPlacementController : MonoBehaviour
         GameObject buildingGO = Instantiate(building.BuildingPrefab, spawnPos, Quaternion.Euler(-90f, currentRotation, 0f));
         buildingGO.transform.localScale = Vector3.one;
 
+        // Initialize health bar and health values
+        BuildingInstance buildingInstance = buildingGO.GetComponent<BuildingInstance>();
+        if (buildingInstance != null)
+        {
+            buildingInstance.Initialize(building);
+        }
+        else
+        {
+            Debug.LogWarning("Building prefab missing BuildingInstance script.");
+        }
+
         if (building.CanSpawnUnits)
         {
             var spawner = buildingGO.GetComponent<BarracksSpawner>();

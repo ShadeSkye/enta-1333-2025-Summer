@@ -16,6 +16,7 @@ public class BuildingData
     public int Cost;
     public int Width;
     public int Length;
+    public int Height;
     public int Health;
     public int Capacity;
     public GameObject BuildingPrefab;
