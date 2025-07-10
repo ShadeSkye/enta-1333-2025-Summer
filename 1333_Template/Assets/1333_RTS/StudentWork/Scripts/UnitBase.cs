@@ -19,7 +19,6 @@ public abstract class UnitBase : MonoBehaviour
         switch (State)
         {
             case UnitState.Moving:
-
                 break;
 
             case UnitState.Attacking:

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: U_Archer
   m_EditorClassIdentifier: 
   _health: 100
-  _movementSpeed: 2
+  _movementSpeed: 1
   _range: 10
   _damage: 20
   _attackType: 1

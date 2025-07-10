@@ -57,6 +57,8 @@ public class UnitInstance : UnitBase
     {
         if (State == UnitState.Dead) return;
 
+        UpdateAnimator();
+
         if (_targetEnemy != null && _targetEnemy.State != UnitState.Dead)
         {
             float dist = Vector3.Distance(transform.position, _targetEnemy.transform.position);
@@ -113,20 +115,6 @@ public class UnitInstance : UnitBase
         _pathIndex = 0;
         State = UnitState.Nothing;
     }
-
-    /*public void SetTeamMaterial(Material teamMaterial)
-    {
-        // Update all Renderer types under the unit skin
-        foreach (Renderer renderer in _unitSkin.GetComponentsInChildren<Renderer>(true))
-        {
-            Material[] newMats = new Material[renderer.sharedMaterials.Length];
-            for (int i = 0; i < newMats.Length; i++)
-            {
-                newMats[i] = teamMaterial;
-            }
-            renderer.materials = newMats;
-        }
-    }*/
 
     public void SetTeamMaterial(Material teamMaterial)
     {
@@ -190,6 +178,8 @@ public class UnitInstance : UnitBase
 
     protected override void HandleAttack()
     {
+        State = UnitState.Attacking;
+
         if (_targetEnemy == null || _targetEnemy.State == UnitState.Dead)
         {
             _targetEnemy = null;
@@ -218,6 +208,8 @@ public class UnitInstance : UnitBase
 
         _hurtParticles?.Play();
 
+        _characterAnimator.SetTrigger("TakeDamage");
+
         UpdateHealthBar();
 
         if (_currentHealth <= 0)
@@ -236,6 +228,8 @@ public class UnitInstance : UnitBase
     private void Die()
     {
         StopMoving();
+        AudioManager.instance.PlaySFX(0);
+        _characterAnimator.SetTrigger("Die");
         gameObject.SetActive(false); // or Destroy(gameObject)
         State = UnitState.Dead;
     }
@@ -277,6 +271,8 @@ public class UnitInstance : UnitBase
 
     private void HandleMovement()
     {
+        State = UnitState.Moving;
+
         if (!_isMoving || _currentPath == null || _currentPath.Count == 0 || _pathIndex >= _currentPath.Count)
         {
             State = UnitState.Nothing; // stop moving
@@ -304,5 +300,29 @@ public class UnitInstance : UnitBase
         Vector3 direction = (nextWaypoint - transform.position).normalized;
         float step = _unitType.MovementSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, nextWaypoint, step);
+    }
+
+    private void UpdateAnimator()
+    {
+        switch (State)
+        {
+            case UnitState.Nothing:
+                _characterAnimator.SetBool("IsIdle", true);
+                _characterAnimator.SetBool("IsAttacking", false);
+                _characterAnimator.SetBool("IsWalking", false);
+                break;
+
+            case UnitState.Attacking:
+                _characterAnimator.SetBool("IsAttacking", true);
+                _characterAnimator.SetBool("IsIdle", false);
+                _characterAnimator.SetBool("IsWalking", false);
+                break;
+
+            case UnitState.Moving:
+                _characterAnimator.SetBool("IsWalking", true);
+                _characterAnimator.SetBool("IsIdle", false);
+                _characterAnimator.SetBool("IsAttacking", false);
+                break;  
+        }
     }
 }

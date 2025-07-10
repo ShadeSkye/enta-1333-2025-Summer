@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
         gridManager.InitializeGrid();
 
+        AudioManager.instance.PlayMusic(1);
+
     }
 
     private bool ValidateReferences()
