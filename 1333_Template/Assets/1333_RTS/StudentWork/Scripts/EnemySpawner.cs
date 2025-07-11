@@ -62,7 +62,7 @@ public class EnemySpawner : MonoBehaviour
         unit.SetTeamMaterial(enemyTeamMaterial);
         unit.PlayerTeam = false;
 
-        FindObjectOfType<UnitManager>()?.RegisterUnit(unit);
+        FindFirstObjectByType<UnitManager>()?.RegisterUnit(unit);
 
         Debug.Log($"Spawned {selectedEnemyType.name} at node {node.Value.WorldPosition}");
     }

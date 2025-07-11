@@ -20,36 +20,49 @@ public class AudioManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        calmMusicSource.clip = Music[0];
+        battleMusicSource.clip = Music[1];
     }
 
-    public void PlayCalmMusic(int I)
+    public void PlayCalmMusic()
     {
         isPlayingCalmMusic = true;
-        calmMusicSource.clip = Music[I];
         calmMusicSource.Play();
     }
 
-    public void PlayBattleMusic(int I)
+    public void PlayBattleMusic()
     {
         isPlayingCalmMusic = false;
-        battleMusicSource.clip = Music[I];
         battleMusicSource.Play();
     }
 
-    public void ChangeMusic(int I)
+    public void ChangeMusic()
     {
-        float timeToFade = 0.25f;
+        float timeToFade = 1f;
         float timeElapsed = 0f;
-        if()
-        while (timeElapsed < timeToFade)
+        if (isPlayingCalmMusic == true)
         {
-            calmMusicSource.volume = Mathf.Lerp(1f, 0f, timeElapsed / timeToFade);
-            battleMusicSource.volume = Mathf.Lerp(0f, 1f, timeElapsed / timeToFade);
+            PlayBattleMusic();
+            while (timeElapsed < timeToFade)
+            {
+                calmMusicSource.volume = Mathf.Lerp(1f, 0f, timeElapsed / timeToFade);
+                battleMusicSource.volume = Mathf.Lerp(0f, 1f, timeElapsed / timeToFade);
 
-            timeElapsed += Time.deltaTime;
+                timeElapsed += Time.deltaTime;
+            }
         }
-        calmMusicSource.clip = Music[I];
-        calmMusicSource.volume = 1;
+        else if (isPlayingCalmMusic == false)
+        {
+            PlayCalmMusic();
+            while (timeElapsed < timeToFade)
+            {
+                battleMusicSource.volume = Mathf.Lerp(1f, 0f, timeElapsed / timeToFade);
+                calmMusicSource.volume = Mathf.Lerp(0f, 1f, timeElapsed / timeToFade);
+
+                timeElapsed += Time.deltaTime;
+            }
+        }
+
     }
 
     public void PlaySFX(int I)

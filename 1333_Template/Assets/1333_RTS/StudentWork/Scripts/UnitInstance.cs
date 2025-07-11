@@ -230,7 +230,7 @@ public class UnitInstance : UnitBase
         StopMoving();
         AudioManager.instance.PlaySFX(0);
         _characterAnimator.SetTrigger("Die");
-        gameObject.SetActive(false); // or Destroy(gameObject)
+        Destroy(gameObject);
         State = UnitState.Dead;
     }
 

@@ -8,7 +8,7 @@ public class BuildingPlacementController : MonoBehaviour
 
     private GameObject currentGhost;
     private BuildingData currentBuilding;
-    private int currentRotation = 0; //0, 90, 180, 270
+    private int currentRotation = 90; //0, 90, 180, 270
 
     private void Update()
     {
@@ -65,6 +65,12 @@ public class BuildingPlacementController : MonoBehaviour
             {
                 PlaceBuilding(gridPos.x, gridPos.y, currentBuilding);
             }
+            else
+            {
+                AudioManager.instance.PlaySFX(2);
+            }
+
+
         }
     }
 
@@ -121,6 +127,7 @@ public class BuildingPlacementController : MonoBehaviour
 
     private void PlaceBuilding(int startX, int startY, BuildingData building)
     {
+        AudioManager.instance.PlaySFX(1);
         // Mark grid nodes as occupied
         (int width, int length) = GetRotatedSize(building);
 
@@ -154,6 +161,7 @@ public class BuildingPlacementController : MonoBehaviour
             return;
         }
 
+        
         GameObject buildingGO = Instantiate(building.BuildingPrefab, spawnPos, Quaternion.Euler(-90f, currentRotation, 0f));
         buildingGO.transform.localScale = Vector3.one;
 

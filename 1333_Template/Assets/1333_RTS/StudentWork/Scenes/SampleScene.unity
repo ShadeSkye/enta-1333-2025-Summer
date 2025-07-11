@@ -257,6 +257,8 @@ MonoBehaviour:
   battleMusicSource: {fileID: 657114048}
   SFX:
   - {fileID: 8300000, guid: 980d8ab6c630ea0419d93481447020a9, type: 3}
+  - {fileID: 8300000, guid: 2f9e23c24c0fe0f41ac941ed4152d23a, type: 3}
+  - {fileID: 8300000, guid: aee500b5abb534a469a9d67e2b463321, type: 3}
   Music:
   - {fileID: 8300000, guid: b93d7bbc2df8f8747a2d3e562325c019, type: 3}
   - {fileID: 8300000, guid: 42a8bbf8dec74bd4b8a04c40c2708a5b, type: 3}
