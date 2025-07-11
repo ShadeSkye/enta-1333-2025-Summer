@@ -42,7 +42,7 @@ public class BarracksSpawner : MonoBehaviour
 
         unit.Initialize(pathfinder, unitTypePrefab.unitType);
         unit.PlayerTeam = true;
-        unit.SetTeamMaterial(armyManager.TeamMaterial);
+        //unit.SetTeamMaterial(armyManager.TeamMaterial);
         armyManager.Units.Add(unit);
 
         FindFirstObjectByType<UnitManager>()?.RegisterUnit(unit);
