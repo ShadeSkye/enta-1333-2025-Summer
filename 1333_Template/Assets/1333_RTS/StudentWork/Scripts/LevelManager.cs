@@ -12,20 +12,14 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        LoadScene("MainGame");
+        DontDestroyOnLoad(gameObject);
+        LoadScene(1);
     }
 
-    private void LoadScene(string sceneName)
+    public void LoadScene(int index)
     {
-        _operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
-        _operation.allowSceneActivation = false;
-        _operation.completed += (AsyncOperation obj) =>
-        {
-            Scene loadedScene = SceneManager.GetSceneByPath(sceneName);
-            Debug.Log($"{sceneName} finished loading (build index: {loadedScene.buildIndex}).");
-            Debug.Log($"It has {loadedScene.rootCount} root(s).");
-            Debug.Log($"There are now {SceneManager.loadedSceneCount} Scenes open.");
-        };
+        _operation = SceneManager.LoadSceneAsync(index, LoadSceneMode.Single);
+        //_operation.allowSceneActivation = false;
     }
 
     private void LoadScreenActive()
