@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
         gridManager.InitializeGrid();
 
+        AudioManager.instance.PlayCalmMusic();
+
     }
 
     private bool ValidateReferences()
@@ -40,6 +42,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             RandomizeAndPathfind();
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            AudioManager.instance.ChangeMusic();
         }
     }
 

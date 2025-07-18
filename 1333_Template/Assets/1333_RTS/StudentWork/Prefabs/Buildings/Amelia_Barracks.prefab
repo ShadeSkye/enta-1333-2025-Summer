@@ -30,11 +30,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       propertyPath: m_LocalRotation.y
@@ -46,7 +46,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -66,6 +66,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3859605772094774428}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8085071589656885647}
   m_SourcePrefab: {fileID: 100100000, guid: e2f28d7d7478cb64597ebb9077abfe6e, type: 3}
 --- !u!1 &1718738630495933002 stripped
 GameObject:
@@ -90,6 +93,9 @@ MonoBehaviour:
     Cost: 0
     Width: 7
     Length: 7
+    Height: 0
+    Health: 0
+    Capacity: 0
     BuildingPrefab: {fileID: 0}
     BuildingPrefabGhost: {fileID: 0}
     CanSpawnUnits: 1
@@ -97,7 +103,7 @@ MonoBehaviour:
     - unitType: {fileID: 11400000, guid: 856b9c917073ea84796ea7f0111d9a73, type: 2}
       unitPrefab: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
     - unitType: {fileID: 11400000, guid: 92eb4583a1c29604ba6b912bd65083ce, type: 2}
-      unitPrefab: {fileID: 1330097870405763816, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
+      unitPrefab: {fileID: 6267393893586642548, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
     SpawnCooldown: 2
   gridManager: {fileID: 0}
   pathfinder: {fileID: 0}
@@ -122,3 +128,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 7, y: 7, z: 5}
   m_Center: {x: 0, y: 0, z: 2}
+--- !u!114 &8085071589656885647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718738630495933002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81c009f986fbf6e458a70b9f8120c7af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBarPrefab: {fileID: 3866543925547059583, guid: ae7ea51d0a0450d4aaa45c5ccf39a3c1, type: 3}

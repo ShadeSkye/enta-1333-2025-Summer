@@ -39,30 +39,6 @@ public class BarracksUIController : MonoBehaviour
         }
     }
 
-    /*private void PopulateUnitButtons()
-    {
-        if (currentSpawner == null || currentSpawner.buildingData == null)
-        {
-            Debug.LogWarning("CurrentSpawner or BuildingData is null");
-            return;
-        }
-
-        foreach (UnitTypePrefab unitTypePrefab in currentSpawner.buildingData.SpawnableUnits)
-        {
-            GameObject buttonGO = Instantiate(unitButtonPrefab, buttonContainer);
-            SelectUnitButton buttonComponent = buttonGO.GetComponent<SelectUnitButton>();
-
-            if (buttonComponent != null)
-            {
-                buttonComponent.SetUp(unitTypePrefab.unitType, OnUnitButtonClicked);
-            }
-            else
-            {
-                Debug.LogWarning("Unit button prefab is missing SelectUnitButton component!");
-            }
-        }
-    }*/
-
     private void PopulateUnitButtons()
     {
         if (currentSpawner == null || currentSpawner.buildingData == null)

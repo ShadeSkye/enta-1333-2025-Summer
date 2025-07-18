@@ -19,17 +19,16 @@ public abstract class UnitBase : MonoBehaviour
         switch (State)
         {
             case UnitState.Moving:
-
                 break;
 
             case UnitState.Attacking:
-
+                HandleAttack();
                 break;
         }
     }
 
-    public virtual void DoMove()
+    protected virtual void HandleAttack()
     {
-
+        // Base does nothing
     }
 }
