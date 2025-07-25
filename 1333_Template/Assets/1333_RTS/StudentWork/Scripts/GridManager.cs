@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    public static GridManager instance;
+
     [SerializeField] private GridSettings gridSettings;
     [SerializeField] private List<TerrainType> chosenTerrain;
     public GridSettings GridSettings => gridSettings;
@@ -16,6 +18,11 @@ public class GridManager : MonoBehaviour
     private List<GridNode> AllNodes = new();
 
     public bool IsInitialized { get; private set; } = false;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     public void InitializeGrid()
     {
@@ -230,5 +237,37 @@ public class GridManager : MonoBehaviour
                 yield return gridNodes[x, y];
             }
         }
+    }
+
+    public bool IsWithinBounds(int x, int y)
+    {
+        return x >= 0 && x < gridSettings.GridSizeX && y >= 0 && y < gridSettings.GridSizeY;
+    }
+
+    public List<GridNode> GetNeighbors(GridNode node)
+    {
+        List<GridNode> neighbors = new();
+        Vector2Int coord = GetCoordinatesFromNode(node);
+
+        int x = coord.x;
+        int y = coord.y;
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx == 0 && dy == 0) continue;
+
+                int checkX = x + dx;
+                int checkY = y + dy;
+
+                if (IsWithinBounds(checkX, checkY))
+                {
+                    neighbors.Add(gridNodes[checkX, checkY]);
+                }
+            }
+        }
+
+        return neighbors;
     }
 }

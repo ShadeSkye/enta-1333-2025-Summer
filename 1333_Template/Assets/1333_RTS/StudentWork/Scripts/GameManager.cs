@@ -90,4 +90,32 @@ public class GameManager : MonoBehaviour
 
         endMarker.position = new Vector3(endX * nodeSize, markerHeight, endY * nodeSize);
     }
+
+    public List<GridNode> GetNeighbors(GridNode node)
+    {
+        List<GridNode> neighbors = new();
+
+        Vector2Int coords = gridManager.GetCoordinatesFromNode(node);
+        int x = coords.x;
+        int y = coords.y;
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (Mathf.Abs(dx) + Mathf.Abs(dy) != 1) continue; // no diagonals
+
+                int nx = x + dx;
+                int ny = y + dy;
+
+                if (nx >= 0 && nx < gridManager.GridSettings.GridSizeX &&
+                    ny >= 0 && ny < gridManager.GridSettings.GridSizeY)
+                {
+                    neighbors.Add(gridManager.GetNode(nx, ny));
+                }
+            }
+        }
+
+        return neighbors;
+    }
 }

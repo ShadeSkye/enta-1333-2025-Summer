@@ -128,9 +128,11 @@ public class BuildingPlacementController : MonoBehaviour
     private void PlaceBuilding(int startX, int startY, BuildingData building)
     {
         AudioManager.instance.PlaySFX(1);
-        // Mark grid nodes as occupied
-        (int width, int length) = GetRotatedSize(building);
 
+        (int width, int length) = GetRotatedSize(building);
+        List<GridNode> occupiedNodes = new List<GridNode>();
+
+        // 1. Mark grid nodes as occupied and collect them
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < length; y++)
@@ -138,14 +140,16 @@ public class BuildingPlacementController : MonoBehaviour
                 int checkX = startX + x;
                 int checkY = startY + y;
 
-                GridNode node = gridManager.GetNode(startX + x, startY + y);
+                GridNode node = gridManager.GetNode(checkX, checkY);
                 node.BuildingData = building;
                 node.Walkable = false;
-                gridManager.gridNodes[startX + x, startY + y] = node;
+                gridManager.gridNodes[checkX, checkY] = node;
+
+                occupiedNodes.Add(node); // <-- collect this node
             }
         }
 
-        // Calculate the spawn position of the building GameObject so it’s centered over the footprint
+        // 2. Calculate the building's world position
         Vector3 baseWorldPos = gridManager.GetNode(startX, startY).WorldPosition;
 
         float offsetX = (width * gridManager.GridSettings.NodeSize) / 2f - (gridManager.GridSettings.NodeSize / 2f);
@@ -161,21 +165,22 @@ public class BuildingPlacementController : MonoBehaviour
             return;
         }
 
-        
+        // 3. Spawn the building GameObject
         GameObject buildingGO = Instantiate(building.BuildingPrefab, spawnPos, Quaternion.Euler(-90f, currentRotation, 0f));
         buildingGO.transform.localScale = Vector3.one;
 
-        // Initialize health bar and health values
+        // 4. Initialize the BuildingInstance and pass occupied nodes
         BuildingInstance buildingInstance = buildingGO.GetComponent<BuildingInstance>();
         if (buildingInstance != null)
         {
-            buildingInstance.Initialize(building);
+            buildingInstance.Initialize(building, occupiedNodes, startX, startY);
         }
         else
         {
             Debug.LogWarning("Building prefab missing BuildingInstance script.");
         }
 
+        // 5. Setup unit spawner if applicable
         if (building.CanSpawnUnits)
         {
             var spawner = buildingGO.GetComponent<BarracksSpawner>();

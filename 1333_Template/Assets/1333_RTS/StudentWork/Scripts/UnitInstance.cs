@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
 /// represents a specific unit instance in the game, inherits from UnitBase
 /// </summary>
-public class UnitInstance : UnitBase
+public class UnitInstance : UnitBase, IAttackable
 {
     [Header("Prefab Stuff")]
     [SerializeField] private Animator _characterAnimator;
@@ -19,7 +20,7 @@ public class UnitInstance : UnitBase
     private Image _healthBarFill;
     private Transform _healthBar;
     private float _lastAttackTime = 0f;
-    private UnitInstance _targetEnemy;
+    private IAttackable _target;
     private int _currentHealth;
     private Pathfinder _pathfinder;
     private List<GridNode> _currentPath = new List<GridNode>();
@@ -32,7 +33,11 @@ public class UnitInstance : UnitBase
     private Vector3? _lastTargetPosition = null;
     private const float ArrivalRadius = 0.5f;
 
+    public bool IsDead => State == UnitState.Dead;
 
+    public Vector3 Position => transform.position;
+
+    UnitState IAttackable.State => this.State;
 
     public bool IsMoving => _isMoving;
 
@@ -59,17 +64,6 @@ public class UnitInstance : UnitBase
 
         UpdateAnimator();
 
-        if (_targetEnemy != null && _targetEnemy.State != UnitState.Dead)
-        {
-            float dist = Vector3.Distance(transform.position, _targetEnemy.transform.position);
-
-            if (dist <= _unitType.Range)
-            {
-                StopMoving(); // stop if close enough
-                State = UnitState.Attacking;
-            }
-        }
-
         if (State == UnitState.Moving)
         {
             HandleMovement();
@@ -83,12 +77,20 @@ public class UnitInstance : UnitBase
     /// </summary>
     public void SetTarget(Vector3 worldPosition)
     {
-        // Store the target.
         _targetWorldPosition = worldPosition;
-        // Request a path from Pathfinder.
         _currentPath = _pathfinder.FindPath(transform.position, worldPosition);
         _pathIndex = 0;
         _isMoving = _currentPath != null && _currentPath.Count > 1;
+
+        if (_currentPath == null || _currentPath.Count == 0)
+        {
+            Debug.LogWarning($"No path found from {transform.position} to {worldPosition}");
+        }
+        else
+        {
+            string pathStr = string.Join(" -> ", _currentPath.Select(n => $"({n.X},{n.Y})"));
+            Debug.Log($"Path found: {pathStr}");
+        }
     }
 
     /// <summary>
@@ -132,47 +134,61 @@ public class UnitInstance : UnitBase
         }
     }
 
-    public void TryFindTarget(List<UnitInstance> enemyUnits)
+    public void TryFindTarget(List<UnitInstance> enemyUnits, List<BuildingInstance> enemyBuildings)
     {
-        UnitInstance closestTarget = null;
+        Vector3 closestTargetPosition = Vector3.zero;
+        IAttackable closestTarget = null;
         float closestDistance = Mathf.Infinity;
 
         foreach (var target in enemyUnits)
         {
-            if (target == null || target.State == UnitState.Dead) continue;
+            if (target == null || target.IsDead) continue;
 
-            float dist = Vector3.Distance(transform.position, target.transform.position);
+            float dist = Vector3.Distance(transform.position, target.Position);
             if (dist < closestDistance)
             {
                 closestDistance = dist;
                 closestTarget = target;
+                closestTargetPosition = target.Position;
+            }
+        }
+
+        foreach (var building in enemyBuildings)
+        {
+            if (building == null || building.IsDead) continue;
+
+            List<GridNode> perimeterNodes = building.GetPerimeterNodes();
+
+            foreach (var node in perimeterNodes)
+            {
+                Debug.Log($"Node at {node.X},{node.Y} walkable={node.Walkable}");
+            }
+
+            foreach (var node in perimeterNodes)
+            {
+                if (!node.Walkable) continue;
+
+                float dist = Vector3.Distance(transform.position, node.WorldPosition);
+                if (dist < closestDistance)
+                {
+                    closestDistance = dist;
+                    closestTarget = building;
+                    closestTargetPosition = node.WorldPosition; // Important: perimeter node position!
+                }
             }
         }
 
         if (closestTarget != null)
         {
-            _targetEnemy = closestTarget;
-            // Only recalc path if target moved more than threshold or we don't have a path yet
-            if (_currentPath == null || !_lastTargetPosition.HasValue ||Vector3.Distance(_lastTargetPosition.Value, closestTarget.transform.position) > ArrivalRadius)
-            {
-                _currentPath = _pathfinder.FindPath(transform.position, closestTarget.transform.position);
-                _pathIndex = 0;
-                _isMoving = true;
-                State = UnitState.Moving;
-                _lastTargetPosition = closestTarget.transform.position;
-            }
+            _target = closestTarget;
+            SetTarget(closestTargetPosition);  // Use perimeter node position here, not building center
+            State = UnitState.Moving;
 
-            // If close enough, switch to attack
             if (closestDistance <= _unitType.Range)
             {
                 State = UnitState.Attacking;
                 _isMoving = false;
             }
-        }
-        else
-        {
-            State = UnitState.Nothing;
-            _isMoving = false;
         }
     }
 
@@ -180,25 +196,25 @@ public class UnitInstance : UnitBase
     {
         State = UnitState.Attacking;
 
-        if (_targetEnemy == null || _targetEnemy.State == UnitState.Dead)
+        if (_target == null || _target.IsDead)
         {
-            _targetEnemy = null;
+            _target = null;
             State = UnitState.Nothing;
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, _targetEnemy.transform.position);
+        float distance = Vector3.Distance(transform.position, _target.Position);
         if (distance > _unitType.Range)
         {
             State = UnitState.Moving;
-            SetTarget(_targetEnemy.transform.position); // path once again toward new position
+            SetTarget(_target.Position);
             return;
         }
 
         if (Time.time - _lastAttackTime >= _attackCooldown)
         {
             _lastAttackTime = Time.time;
-            _targetEnemy.TakeDamage(_unitType.Damage);
+            _target.TakeDamage(_unitType.Damage);
         }
     }
 
@@ -238,34 +254,36 @@ public class UnitInstance : UnitBase
     {
         base.Tick();
 
-        if(State == UnitState.Moving)
+        if (State == UnitState.Moving && _target != null)
         {
-            HandleMovement();
+            float distance = Vector3.Distance(transform.position, _target.transform.position);
+
+            if (distance <= _unitType.Range)
+            {
+                // Target is within attack range — stop moving and attack
+                StopMoving();
+                State = UnitState.Attacking;
+            }
+            else
+            {
+                // Target is out of range — keep moving and recalculate path if needed
+                if (_lastTargetPosition == null ||
+                    Vector3.Distance(_lastTargetPosition.Value, _target.transform.position) > 0.5f ||
+                    Time.time - _lastRepathTime >= _repathInterval)
+                {
+                    SetTarget(_target.transform.position);
+                    _lastTargetPosition = _target.transform.position;
+                    _lastRepathTime = Time.time;
+                }
+            }
         }
         else if (State == UnitState.Attacking)
         {
             HandleAttack();
         }
-        else if (State == UnitState.Moving && _targetEnemy != null)
+        else if (State == UnitState.Moving)
         {
-            float distance = Vector3.Distance(transform.position, _targetEnemy.transform.position);
-
-            if (distance <= _unitType.Range)
-            {
-                StopMoving();
-                State = UnitState.Attacking;
-                return;
-            }
-
-            // Recalculate path if enemy has moved or every interval
-            if (_lastTargetPosition == null ||
-                Vector3.Distance(_lastTargetPosition.Value, _targetEnemy.transform.position) > 0.5f ||
-                Time.time - _lastRepathTime >= _repathInterval)
-            {
-                SetTarget(_targetEnemy.transform.position);
-                _lastTargetPosition = _targetEnemy.transform.position;
-                _lastRepathTime = Time.time;
-            }
+            HandleMovement();
         }
     }
 

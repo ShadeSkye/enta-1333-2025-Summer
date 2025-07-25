@@ -12,6 +12,8 @@ public struct GridNode
     public Color GizmoColor;
     public TerrainType TerrainType;
     public BuildingData BuildingData;
+    public int X;
+    public int Y;
 
     public bool IsValid => !float.IsNaN(WorldPosition.x);
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UnitManager : MonoBehaviour
 {
+    public static UnitManager Instance;
+
     [SerializeField] private GridManager _gridManager;
     [SerializeField] private GameObject dummy;
     [SerializeField] private Material[] teamMaterials;
@@ -14,6 +16,14 @@ public class UnitManager : MonoBehaviour
     private List<UnitInstance> _allUnits = new();
     private List<UnitInstance> _playerUnits = new();
     private List<UnitInstance> _enemyUnits = new();
+    private List<BuildingInstance> _playerBuildings = new();
+
+    public List<BuildingInstance> PlayerBuildings => _playerBuildings;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Update()
     {
@@ -24,7 +34,9 @@ public class UnitManager : MonoBehaviour
             if (unit.State == UnitState.Nothing)
             {
                 List<UnitInstance> targets = unit.PlayerTeam ? _enemyUnits : _playerUnits;
-                unit.TryFindTarget(targets);
+                List<BuildingInstance> buildings = unit.PlayerTeam ? new List<BuildingInstance>() : _playerBuildings;
+
+                unit.TryFindTarget(targets, buildings);
             }
 
             unit.Tick();
@@ -88,5 +100,16 @@ public class UnitManager : MonoBehaviour
         _allUnits.Clear();
         _playerUnits.Clear();
         _enemyUnits.Clear();
+    }
+
+    public void RegisterPlayerBuilding(BuildingInstance building)
+    {
+        if (building != null && !_playerBuildings.Contains(building))
+            _playerBuildings.Add(building);
+    }
+
+    public void UnregisterPlayerBuilding(BuildingInstance building)
+    {
+        _playerBuildings.Remove(building);
     }
 }
