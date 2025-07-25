@@ -27,13 +27,7 @@ public class AStarPathfinder : PathfindingAlgorithm
         return neighbors;
     }
 
-    /* private bool IsAreaWalkable(GridManager gridManager, GridNode node)
-     {
-         float nodeSize = gridManager.GridSettings.NodeSize;
-         int x = Mathf.RoundToInt(node.WorldPosition.x / nodeSize);
-         int y = Mathf.RoundToInt(node.WorldPosition.z / nodeSize);
-         return true;
-     }*/
+    
 
     private bool IsAreaWalkable(GridManager gridManager, GridNode node)
     {
@@ -43,11 +37,6 @@ public class AStarPathfinder : PathfindingAlgorithm
 
     public List<GridNode> FindPath(GridManager gridManager, GridNode start, GridNode end)
     {
-        //Debug.Log("Finding path");
-
-        //Debug.Log(start.Name);
-        //Debug.Log(end.Name);
-
         // preparing data structures
         List<GridNode> openSet = new List<GridNode>();
         Dictionary<GridNode, int> costSoFar = new Dictionary<GridNode, int>();

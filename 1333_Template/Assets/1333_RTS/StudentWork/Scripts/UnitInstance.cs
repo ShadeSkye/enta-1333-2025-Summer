@@ -157,31 +157,21 @@ public class UnitInstance : UnitBase, IAttackable
         {
             if (building == null || building.IsDead) continue;
 
-            List<GridNode> perimeterNodes = building.GetPerimeterNodes();
+            Vector3 perimeterPos = _pathfinder.GetClosestWalkablePerimeterPosition(building, transform.position);
+            float dist = Vector3.Distance(transform.position, perimeterPos);
 
-            foreach (var node in perimeterNodes)
+            if (dist < closestDistance)
             {
-                Debug.Log($"Node at {node.X},{node.Y} walkable={node.Walkable}");
-            }
-
-            foreach (var node in perimeterNodes)
-            {
-                if (!node.Walkable) continue;
-
-                float dist = Vector3.Distance(transform.position, node.WorldPosition);
-                if (dist < closestDistance)
-                {
-                    closestDistance = dist;
-                    closestTarget = building;
-                    closestTargetPosition = node.WorldPosition; // Important: perimeter node position!
-                }
+                closestDistance = dist;
+                closestTarget = building;
+                closestTargetPosition = perimeterPos;
             }
         }
 
         if (closestTarget != null)
         {
             _target = closestTarget;
-            SetTarget(closestTargetPosition);  // Use perimeter node position here, not building center
+            SetTarget(closestTargetPosition);  
             State = UnitState.Moving;
 
             if (closestDistance <= _unitType.Range)
@@ -196,6 +186,7 @@ public class UnitInstance : UnitBase, IAttackable
     {
         State = UnitState.Attacking;
 
+        // Check if _target is null or destroyed (Unity null check)
         if (_target == null || _target.IsDead)
         {
             _target = null;
@@ -203,6 +194,7 @@ public class UnitInstance : UnitBase, IAttackable
             return;
         }
 
+        // It's safe now to access _target.Position
         float distance = Vector3.Distance(transform.position, _target.Position);
         if (distance > _unitType.Range)
         {
@@ -254,25 +246,30 @@ public class UnitInstance : UnitBase, IAttackable
     {
         base.Tick();
 
-        if (State == UnitState.Moving && _target != null)
+        if (_target == null || _target.IsDead)
         {
-            float distance = Vector3.Distance(transform.position, _target.transform.position);
+            _target = null;
+            State = UnitState.Nothing;
+            return;
+        }
+
+        if (State == UnitState.Moving)
+        {
+            float distance = Vector3.Distance(transform.position, _target.Position);
 
             if (distance <= _unitType.Range)
             {
-                // Target is within attack range — stop moving and attack
                 StopMoving();
                 State = UnitState.Attacking;
             }
             else
             {
-                // Target is out of range — keep moving and recalculate path if needed
                 if (_lastTargetPosition == null ||
-                    Vector3.Distance(_lastTargetPosition.Value, _target.transform.position) > 0.5f ||
+                    Vector3.Distance(_lastTargetPosition.Value, _target.Position) > 0.5f ||
                     Time.time - _lastRepathTime >= _repathInterval)
                 {
-                    SetTarget(_target.transform.position);
-                    _lastTargetPosition = _target.transform.position;
+                    SetTarget(_target.Position);
+                    _lastTargetPosition = _target.Position;
                     _lastRepathTime = Time.time;
                 }
             }

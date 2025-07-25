@@ -41,4 +41,24 @@ public class Pathfinder : MonoBehaviour
             Gizmos.DrawLine(lastPath[i].WorldPosition, lastPath[i + 1].WorldPosition);
         }
     }
+
+    public Vector3 GetClosestWalkablePerimeterPosition(BuildingInstance building, Vector3 fromPosition)
+    {
+        var perimeterNodes = building.GetWalkablePerimeter(gridManager);
+
+        float bestDistance = float.MaxValue;
+        Vector3 bestPos = Vector3.zero;
+
+        foreach (var node in perimeterNodes)
+        {
+            float dist = Vector3.Distance(fromPosition, node.WorldPosition);
+            if (dist < bestDistance)
+            {
+                bestDistance = dist;
+                bestPos = node.WorldPosition;
+            }
+        }
+
+        return bestPos;
+    }
 }

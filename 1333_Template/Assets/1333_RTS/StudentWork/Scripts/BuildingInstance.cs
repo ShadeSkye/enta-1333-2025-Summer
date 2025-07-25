@@ -24,7 +24,15 @@ public class BuildingInstance : MonoBehaviour, IAttackable
     public List<GridNode> OccupiedNodes => _occupiedNodes;
     public bool IsDead => _isDead;
 
-    public Vector3 Position => transform.position;
+    public Vector3 Position
+    {
+        get
+        {
+            if (this == null) // Unity override for destroyed object
+                return Vector3.zero;
+            return transform.position;
+        }
+    }
 
     public UnitState State => _isDead ? UnitState.Dead : UnitState.Nothing;
 
