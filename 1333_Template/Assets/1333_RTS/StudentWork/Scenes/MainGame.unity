@@ -1625,9 +1625,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 92eb4583a1c29604ba6b912bd65083ce, type: 2}
   enemyTeamMaterial: {fileID: 2100000, guid: 0c84cd8131a4ce34f95f3f1fedef6c45, type: 2}
   enemyParent: {fileID: 1359632496}
-  spawnAreaStart: {x: 0, y: 0}
-  spawnAreaWidth: 3
-  spawnAreaHeight: 3
+  minTimeBetweenWaves: 90
+  maxTimeBetweenWaves: 180
+  minEnemiesPerWave: 10
+  maxEnemiesPerWave: 35
   spawnHeightOffset: 0.5
 --- !u!4 &1359632496
 Transform:

@@ -32,7 +32,7 @@ public class UnitInstance : UnitBase
     private Vector3? _lastTargetPosition = null;
     private const float ArrivalRadius = 0.5f;
 
-
+    public event System.Action<UnitInstance> OnDeath;
 
     public bool IsMoving => _isMoving;
 
@@ -230,8 +230,14 @@ public class UnitInstance : UnitBase
         StopMoving();
         AudioManager.instance.PlaySFX(0);
         _characterAnimator.SetTrigger("Die");
-        Destroy(gameObject);
         State = UnitState.Dead;
+
+        if (!PlayerTeam)
+        {
+            OnDeath?.Invoke(this);
+        }
+
+        Destroy(gameObject);
     }
 
     public override void Tick()
