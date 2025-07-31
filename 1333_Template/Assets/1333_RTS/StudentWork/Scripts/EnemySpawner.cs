@@ -11,34 +11,47 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Material enemyTeamMaterial;
     [SerializeField] private Transform enemyParent;
 
-    [Header("Spawn Settings")]
-    [SerializeField] private Vector2Int spawnAreaStart = new Vector2Int(0, 0); // top-left corner
-    [SerializeField] private int spawnAreaWidth = 3;
-    [SerializeField] private int spawnAreaHeight = 3;
+    [Header("Wave Settings")]
+    [SerializeField] private float minTimeBetweenWaves = 5f; //seconds
+    [SerializeField] private float maxTimeBetweenWaves = 10f;
+    [SerializeField] private int minEnemiesPerWave = 3;
+    [SerializeField] private int maxEnemiesPerWave = 6;
+
     [SerializeField] private float spawnHeightOffset = 0.5f;
 
-    void Update()
+    private int aliveEnemies = 0;
+
+    public int AliveEnemies => aliveEnemies;
+
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.U))
+        StartCoroutine(WaveSpawnerRoutine());
+    }
+
+    private IEnumerator WaveSpawnerRoutine()
+    {
+        while (true)
         {
-            SpawnEnemy();
+            float waitTime = Random.Range(minTimeBetweenWaves, maxTimeBetweenWaves);
+            yield return new WaitForSeconds(waitTime);
+
+            int enemyCount = Random.Range(minEnemiesPerWave, maxEnemiesPerWave + 1);
+            Vector2Int spawnDirection = GetRandomEdge(); // Which side of the grid
+            List<GridNode> spawnNodes = GetSpawnNodesAlongEdge(spawnDirection, enemyCount);
+
+            for (int i = 0; i < enemyCount && i < spawnNodes.Count; i++)
+            {
+                SpawnEnemyAtNode(spawnNodes[i]);
+            }
+
+            Debug.Log($"Wave spawned with {enemyCount} enemies from direction {spawnDirection}");
         }
     }
 
-    private void SpawnEnemy()
+    private void SpawnEnemyAtNode(GridNode node)
     {
-        if (!gridManager.IsInitialized)
-        {
-            Debug.LogError("Grid not initialized yet.");
+        if (!node.Walkable)
             return;
-        }
-
-        GridNode? node = GetRandomWalkableNodeInArea();
-        if (!node.HasValue)
-        {
-            Debug.LogWarning("Couldn't find a valid walkable node in spawn area.");
-            return;
-        }
 
         if (enemyUnitTypes == null || enemyUnitTypes.Count == 0)
         {
@@ -47,7 +60,7 @@ public class EnemySpawner : MonoBehaviour
         }
 
         UnitType selectedEnemyType = enemyUnitTypes[Random.Range(0, enemyUnitTypes.Count)];
-        Vector3 spawnPos = node.Value.WorldPosition + Vector3.up * spawnHeightOffset;
+        Vector3 spawnPos = node.WorldPosition + Vector3.up * spawnHeightOffset;
 
         GameObject enemyGO = Instantiate(selectedEnemyType.UnitPrefab, spawnPos, Quaternion.identity, enemyParent);
         UnitInstance unit = enemyGO.GetComponent<UnitInstance>();
@@ -64,29 +77,92 @@ public class EnemySpawner : MonoBehaviour
 
         FindFirstObjectByType<UnitManager>()?.RegisterUnit(unit);
 
-        Debug.Log($"Spawned {selectedEnemyType.name} at node {node.Value.WorldPosition}");
-    }
-
-    private GridNode? GetRandomWalkableNodeInArea()
-    {
-        List<GridNode> possibleNodes = new();
-
-        for (int x = spawnAreaStart.x; x < spawnAreaStart.x + spawnAreaWidth; x++)
+        if (aliveEnemies <= 0)
         {
-            for (int y = spawnAreaStart.y; y < spawnAreaStart.y + spawnAreaHeight; y++)
-            {
-                if (x >= 0 && y >= 0 && x < gridManager.GridSettings.GridSizeX && y < gridManager.GridSettings.GridSizeY)
-                {
-                    GridNode node = gridManager.GetNode(x, y);
-                    if (node.Walkable)
-                        possibleNodes.Add(node);
-                }
-            }
+            AudioManager.instance.ChangeMusic();
         }
 
-        if (possibleNodes.Count == 0)
-            return null;
+        aliveEnemies++;
 
-        return possibleNodes[Random.Range(0, possibleNodes.Count)];
+        unit.OnDeath += HandleEnemyDeath;
+    }
+
+    /// <summary>
+    /// Randomly selects a side: left (0,-1), right (0,1), top (-1,0), bottom (1,0)
+    /// </summary>
+    private Vector2Int GetRandomEdge()
+    {
+        int rand = Random.Range(0, 4);
+        return rand switch
+        {
+            0 => Vector2Int.left,   // Left
+            1 => Vector2Int.right,  // Right
+            2 => Vector2Int.up,     // Top
+            _ => Vector2Int.down    // Bottom
+        };
+    }
+
+    /// <summary>
+    /// Gets walkable nodes along a specific edge (row or column).
+    /// </summary>
+    private List<GridNode> GetSpawnNodesAlongEdge(Vector2Int edge, int count)
+    {
+        List<GridNode> edgeNodes = new();
+
+        int sizeX = gridManager.GridSettings.GridSizeX;
+        int sizeY = gridManager.GridSettings.GridSizeY;
+
+        if (edge == Vector2Int.left)
+        {
+            for (int y = 0; y < sizeY; y++)
+                TryAddNode(0, y, edgeNodes);
+        }
+        else if (edge == Vector2Int.right)
+        {
+            for (int y = 0; y < sizeY; y++)
+                TryAddNode(sizeX - 1, y, edgeNodes);
+        }
+        else if (edge == Vector2Int.up)
+        {
+            for (int x = 0; x < sizeX; x++)
+                TryAddNode(x, sizeY - 1, edgeNodes);
+        }
+        else if (edge == Vector2Int.down)
+        {
+            for (int x = 0; x < sizeX; x++)
+                TryAddNode(x, 0, edgeNodes);
+        }
+
+        // Shuffle list to get random positions along the edge
+        for (int i = 0; i < edgeNodes.Count; i++)
+        {
+            GridNode temp = edgeNodes[i];
+            int randomIndex = Random.Range(i, edgeNodes.Count);
+            edgeNodes[i] = edgeNodes[randomIndex];
+            edgeNodes[randomIndex] = temp;
+        }
+
+        return edgeNodes.GetRange(0, Mathf.Min(count, edgeNodes.Count));
+    }
+
+    private void TryAddNode(int x, int y, List<GridNode> list)
+    {
+        GridNode node = gridManager.GetNode(x, y);
+        if (node.Walkable)
+            list.Add(node);
+    }
+
+    private void HandleEnemyDeath(UnitInstance unit)
+    {
+        aliveEnemies--;
+
+        // Unsubscribe just in case
+        unit.OnDeath -= HandleEnemyDeath;
+
+        if (aliveEnemies <= 0)
+        {
+            AudioManager.instance.ChangeMusic();
+            Debug.Log("All enemies in the wave defeated.");
+        }
     }
 }
