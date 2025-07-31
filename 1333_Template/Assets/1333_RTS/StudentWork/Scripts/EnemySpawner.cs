@@ -60,7 +60,7 @@ public class EnemySpawner : MonoBehaviour
         }
 
         UnitType selectedEnemyType = enemyUnitTypes[Random.Range(0, enemyUnitTypes.Count)];
-        Vector3 spawnPos = node.WorldPosition + Vector3.up * spawnHeightOffset;
+        Vector3 spawnPos = node.WorldPosition;
 
         GameObject enemyGO = Instantiate(selectedEnemyType.UnitPrefab, spawnPos, Quaternion.identity, enemyParent);
         UnitInstance unit = enemyGO.GetComponent<UnitInstance>();

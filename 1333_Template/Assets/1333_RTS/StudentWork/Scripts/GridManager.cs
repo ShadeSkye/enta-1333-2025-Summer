@@ -8,6 +8,8 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] private GridSettings gridSettings;
     [SerializeField] private List<TerrainType> chosenTerrain;
+    [SerializeField] private GameObject nodeVisualPrefab;
+    [SerializeField] private Transform nodeParent;
     public GridSettings GridSettings => gridSettings;
 
     public GridNode[,] gridNodes;
@@ -41,6 +43,20 @@ public class GridManager : MonoBehaviour
                 gridNodes[x, y] = node;
             }
         }
+
+        if (nodeVisualPrefab != null)
+        {
+            for (int x = 0; x < gridSettings.GridSizeX; x++)
+            {
+                for (int y = 0; y < gridSettings.GridSizeY; y++)
+                {
+                    GridNode node = gridNodes[x, y];
+                    Vector3 cubePosition = node.WorldPosition + Vector3.down; // offset by -1 on Y
+                    GameObject visual = Instantiate(nodeVisualPrefab, cubePosition, Quaternion.identity, this.transform);
+                }
+            }
+        }
+
         IsInitialized = true;
 
     }

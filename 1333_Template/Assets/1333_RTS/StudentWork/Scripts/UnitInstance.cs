@@ -45,6 +45,10 @@ public class UnitInstance : UnitBase
         _unitType = unitType;
         _currentHealth = unitType.Health;
 
+        Vector3 pos = transform.position;
+        pos.y = 0f;
+        transform.position = pos;
+
         GameObject hb = Instantiate(_healthBarPrefab, transform);
         _healthBar = hb.transform;
 

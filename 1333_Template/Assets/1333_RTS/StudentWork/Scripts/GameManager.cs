@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform endMarker;
     [SerializeField] private LineRenderer pathLine;
     [SerializeField] private float markerHeight = 0.5f;
+    [SerializeField] private BuildingData castleBuilding;
 
     private void Awake()
     {
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
         }
 
         gridManager.InitializeGrid();
+        PlaceStartingCastle();
 
         AudioManager.instance.PlayCalmMusic();
 
@@ -39,15 +41,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            RandomizeAndPathfind();
-        }
 
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            AudioManager.instance.ChangeMusic();
-        }
     }
 
     private void RandomizeAndPathfind()
@@ -89,5 +83,71 @@ public class GameManager : MonoBehaviour
         }while(endX == StartX && endY == StartY);
 
         endMarker.position = new Vector3(endX * nodeSize, markerHeight, endY * nodeSize);
+    }
+
+    private void PlaceStartingCastle()
+    {
+        int centerX = gridManager.GridSettings.GridSizeX / 2 - (castleBuilding.Width / 2);
+        int centerY = gridManager.GridSettings.GridSizeY / 2 - (castleBuilding.Length / 2);
+
+        if (!gridManager.CanPlaceBuilding(centerX, centerY, castleBuilding))
+        {
+            Debug.LogError("Failed to place starting castle: position not valid.");
+            return;
+        }
+
+        // Mark nodes as occupied
+        for (int x = 0; x < castleBuilding.Width; x++)
+        {
+            for (int y = 0; y < castleBuilding.Length; y++)
+            {
+                int nodeX = centerX + x;
+                int nodeY = centerY + y;
+
+                GridNode node = gridManager.GetNode(nodeX, nodeY);
+                node.BuildingData = castleBuilding;
+                node.Walkable = false;
+                gridManager.gridNodes[nodeX, nodeY] = node;
+            }
+        }
+
+        Vector3 baseWorldPos = gridManager.GetNode(centerX, centerY).WorldPosition;
+
+        float offsetX = (castleBuilding.Width * gridManager.GridSettings.NodeSize) / 2f - (gridManager.GridSettings.NodeSize / 2f);
+        float offsetZ = (castleBuilding.Length * gridManager.GridSettings.NodeSize) / 2f - (gridManager.GridSettings.NodeSize / 2f);
+
+        Vector3 spawnPos = baseWorldPos + new Vector3(offsetX, -1, offsetZ);
+
+        GameObject castleGO = Instantiate(castleBuilding.BuildingPrefab, spawnPos, Quaternion.Euler(-90f, 90f, 0f));
+        castleGO.transform.localScale = Vector3.one;
+
+        Camera.main.transform.position = spawnPos + new Vector3(0, 20f, -20f); // Offset to look from above
+        Camera.main.transform.LookAt(castleGO.transform);
+
+        var buildingInstance = castleGO.GetComponent<BuildingInstance>();
+        if (buildingInstance != null)
+        {
+            buildingInstance.Initialize(castleBuilding);
+        }
+
+        // Optional: Tag for win/loss detection
+        castleGO.tag = "Castle";
+
+        // Optional: Set up spawner if applicable
+        if (castleBuilding.CanSpawnUnits)
+        {
+            var spawner = castleGO.GetComponent<BarracksSpawner>();
+            if (spawner != null)
+            {
+                spawner.buildingData = castleBuilding;
+                spawner.gridManager = gridManager;
+                spawner.pathfinder = pathfinder;
+                spawner.armyManager = FindAnyObjectByType<PlayerArmyManager>()?.ArmyManagerRef;
+            }
+            else
+            {
+                Debug.LogWarning("Castle building can spawn units but has no BarracksSpawner component.");
+            }
+        }
     }
 }

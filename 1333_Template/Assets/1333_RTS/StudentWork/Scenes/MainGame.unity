@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 64fff6a91edc99d40a9a2eb3f7b5dd0a, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -598,7 +598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &610213997
 LineRenderer:
   serializedVersion: 2
@@ -1861,6 +1861,20 @@ MonoBehaviour:
   endMarker: {fileID: 296081412}
   pathLine: {fileID: 610213997}
   markerHeight: 0.5
+  castleBuilding:
+    BuildingName: Castle
+    Icon: {fileID: 0}
+    Cost: 0
+    Width: 8
+    Length: 8
+    Height: 11
+    Health: 1000
+    Capacity: 10
+    BuildingPrefab: {fileID: 7426707252846773150, guid: 5bc30da405604a04481747aa1515fe39, type: 3}
+    BuildingPrefabGhost: {fileID: 7627717441207553902, guid: d6f51c8a9ba64cf40a73524d08a196cc, type: 3}
+    CanSpawnUnits: 0
+    SpawnableUnits: []
+    SpawnCooldown: 2
 --- !u!4 &1649656114
 Transform:
   m_ObjectHideFlags: 0
@@ -2241,6 +2255,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 340263a899971bb41bc670fe5b08fe4c, type: 2}
   - {fileID: 11400000, guid: 4f164229ad195a04aa179bce81a39f45, type: 2}
   - {fileID: 11400000, guid: 9a74687677373b944a7988319fb30af8, type: 2}
+  nodeVisualPrefab: {fileID: 8192858496113543583, guid: fff91d53fe316144caeafca28f218534, type: 3}
+  nodeParent: {fileID: 0}
 --- !u!4 &1808984560
 Transform:
   m_ObjectHideFlags: 0

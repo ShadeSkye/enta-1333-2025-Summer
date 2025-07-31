@@ -26,22 +26,9 @@ MonoBehaviour:
     CanSpawnUnits: 1
     SpawnableUnits:
     - unitType: {fileID: 11400000, guid: 92eb4583a1c29604ba6b912bd65083ce, type: 2}
-      unitPrefab: {fileID: 1330097870405763816, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
+      unitPrefab: {fileID: 6267393893586642548, guid: 5e838ede874d2a24d963e9e298b8dd2f, type: 3}
     - unitType: {fileID: 11400000, guid: 856b9c917073ea84796ea7f0111d9a73, type: 2}
       unitPrefab: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
-    SpawnCooldown: 2
-  - BuildingName: Castle
-    Icon: {fileID: 0}
-    Cost: 0
-    Width: 8
-    Length: 8
-    Height: 11
-    Health: 1000
-    Capacity: 10
-    BuildingPrefab: {fileID: 7426707252846773150, guid: 5bc30da405604a04481747aa1515fe39, type: 3}
-    BuildingPrefabGhost: {fileID: 7627717441207553902, guid: d6f51c8a9ba64cf40a73524d08a196cc, type: 3}
-    CanSpawnUnits: 0
-    SpawnableUnits: []
     SpawnCooldown: 2
   - BuildingName: Farm
     Icon: {fileID: 0}
