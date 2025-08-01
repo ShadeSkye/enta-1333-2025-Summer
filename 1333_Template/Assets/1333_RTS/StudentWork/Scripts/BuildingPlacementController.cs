@@ -5,6 +5,7 @@ using UnityEngine;
 public class BuildingPlacementController : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
+    [SerializeField] private PopulationManager populationManager;
 
     private GameObject currentGhost;
     private BuildingData currentBuilding;
@@ -63,7 +64,15 @@ public class BuildingPlacementController : MonoBehaviour
         {
             if (gridManager.CanPlaceBuilding(gridPos.x, gridPos.y, currentBuilding))
             {
-                PlaceBuilding(gridPos.x, gridPos.y, currentBuilding);
+                if (CanAffordBuilding(currentBuilding))
+                {
+                    PlaceBuilding(gridPos.x, gridPos.y, currentBuilding);
+                    ConsumeBuildingCosts(currentBuilding);
+                }
+                else
+                {
+                    AudioManager.instance.PlaySFX(2); // error sound for not enough resources or capacity
+                }
             }
             else
             {
@@ -190,6 +199,11 @@ public class BuildingPlacementController : MonoBehaviour
             spawner.pathfinder = FindAnyObjectByType<Pathfinder>();
             spawner.armyManager = FindAnyObjectByType<PlayerArmyManager>()?.ArmyManagerRef;
         }
+
+        if (building.PopulationCapacityAdded > 0)
+        {
+            populationManager.AddCapacity(building.PopulationCapacityAdded);
+        }
     }
 
     private void SetGhostColor(Color color)
@@ -235,5 +249,32 @@ public class BuildingPlacementController : MonoBehaviour
         }
 
         return found ? bestNode.WorldPosition : Vector3.zero;
+    }
+
+    private bool CanAffordBuilding(BuildingData building)
+    {
+        // Check resources
+        bool hasFood = ResourceManager.Instance.GetResource(ResourceType.Food) >= building.FoodCost;
+        bool hasWood = ResourceManager.Instance.GetResource(ResourceType.Wood) >= building.WoodCost;
+        bool hasMetal = ResourceManager.Instance.GetResource(ResourceType.Metal) >= building.MetalCost;
+
+        // Check if population cost fits within available capacity
+        int currentPop = populationManager.CurrentPopulation;
+        int maxPop = populationManager.MaxPopulation;
+        bool hasPopulationCapacity = (currentPop + building.PopulationCost) <= maxPop;
+
+        return hasFood && hasWood && hasMetal && hasPopulationCapacity;
+    }
+
+    private void ConsumeBuildingCosts(BuildingData building)
+    {
+        if (building.FoodCost > 0)
+            ResourceManager.Instance.AddResource(ResourceType.Food, -building.FoodCost);
+        if (building.WoodCost > 0)
+            ResourceManager.Instance.AddResource(ResourceType.Wood, -building.WoodCost);
+        if (building.MetalCost > 0)
+            ResourceManager.Instance.AddResource(ResourceType.Metal, -building.MetalCost);
+        if (building.PopulationCost > 0)
+            populationManager.AddUnits(building.PopulationCost);
     }
 }

@@ -241,6 +241,11 @@ public class UnitInstance : UnitBase
             OnDeath?.Invoke(this);
         }
 
+        if (PlayerTeam)
+        {
+            PopulationManager.Instance.RemoveUnits(1);
+        }
+
         Destroy(gameObject);
     }
 

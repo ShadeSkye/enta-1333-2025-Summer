@@ -54,6 +54,12 @@ public class BuildingInstance : MonoBehaviour
         buildingData = data;
         currentHealth = buildingData.Health;
         SetupHealthBar();
+
+        if (buildingData.ProducesResources && buildingData.ResourcesProduced.Count > 0)
+        {
+            ResourceGenerator generator = gameObject.AddComponent<ResourceGenerator>();
+            generator.Initialize(buildingData.ResourcesProduced);
+        }
     }
 
     private void SetupHealthBar()
