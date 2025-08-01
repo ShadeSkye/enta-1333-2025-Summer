@@ -15,7 +15,10 @@ MonoBehaviour:
   Buildings:
   - BuildingName: Barracks
     Icon: {fileID: 0}
-    Cost: 0
+    FoodCost: 10
+    WoodCost: 5
+    MetalCost: 0
+    PopulationCost: 0
     Width: 7
     Length: 7
     Height: 5
@@ -30,9 +33,15 @@ MonoBehaviour:
     - unitType: {fileID: 11400000, guid: 856b9c917073ea84796ea7f0111d9a73, type: 2}
       unitPrefab: {fileID: 2271106700296296925, guid: 85dbb01d0fd91994aa1278c412e53445, type: 3}
     SpawnCooldown: 2
+    ProducesResources: 0
+    ResourcesProduced: []
+    PopulationCapacityAdded: 0
   - BuildingName: Farm
     Icon: {fileID: 0}
-    Cost: 0
+    FoodCost: 0
+    WoodCost: 15
+    MetalCost: 0
+    PopulationCost: 2
     Width: 7
     Length: 7
     Height: 4
@@ -43,9 +52,18 @@ MonoBehaviour:
     CanSpawnUnits: 0
     SpawnableUnits: []
     SpawnCooldown: 2
+    ProducesResources: 1
+    ResourcesProduced:
+    - ResourceType: 0
+      AmountPerCycle: 2
+      ProductionInterval: 2
+    PopulationCapacityAdded: 0
   - BuildingName: Blacksmith
     Icon: {fileID: 0}
-    Cost: 0
+    FoodCost: 0
+    WoodCost: 25
+    MetalCost: 0
+    PopulationCost: 4
     Width: 7
     Length: 7
     Height: 5
@@ -56,9 +74,18 @@ MonoBehaviour:
     CanSpawnUnits: 0
     SpawnableUnits: []
     SpawnCooldown: 2
+    ProducesResources: 1
+    ResourcesProduced:
+    - ResourceType: 2
+      AmountPerCycle: 5
+      ProductionInterval: 10
+    PopulationCapacityAdded: 0
   - BuildingName: House
     Icon: {fileID: 0}
-    Cost: 0
+    FoodCost: 15
+    WoodCost: 20
+    MetalCost: 10
+    PopulationCost: 0
     Width: 4
     Length: 4
     Height: 4
@@ -69,9 +96,15 @@ MonoBehaviour:
     CanSpawnUnits: 0
     SpawnableUnits: []
     SpawnCooldown: 2
+    ProducesResources: 0
+    ResourcesProduced: []
+    PopulationCapacityAdded: 5
   - BuildingName: Lumber MIll
     Icon: {fileID: 0}
-    Cost: 0
+    FoodCost: 0
+    WoodCost: 0
+    MetalCost: 15
+    PopulationCost: 3
     Width: 7
     Length: 7
     Height: 4
@@ -82,16 +115,9 @@ MonoBehaviour:
     CanSpawnUnits: 0
     SpawnableUnits: []
     SpawnCooldown: 2
-  - BuildingName: Archer Tower
-    Icon: {fileID: 0}
-    Cost: 0
-    Width: 3
-    Length: 3
-    Height: 8
-    Health: 250
-    Capacity: 0
-    BuildingPrefab: {fileID: 7060373363580420980, guid: cbe23072ded310b499312cd56370e7aa, type: 3}
-    BuildingPrefabGhost: {fileID: 3985445461121390316, guid: b94d952470538ed4494aae56e7071d71, type: 3}
-    CanSpawnUnits: 0
-    SpawnableUnits: []
-    SpawnCooldown: 2
+    ProducesResources: 1
+    ResourcesProduced:
+    - ResourceType: 1
+      AmountPerCycle: 5
+      ProductionInterval: 6
+    PopulationCapacityAdded: 0

@@ -111,6 +111,16 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (PopulationManager.Instance != null)
+        {
+            PopulationManager.Instance.AddCapacity(castleBuilding.PopulationCapacityAdded);
+            Debug.Log($"Added {castleBuilding.PopulationCapacityAdded} to max population from castle.");
+        }
+        else
+        {
+            Debug.LogWarning("PopulationManager instance not found.");
+        }
+
         Vector3 baseWorldPos = gridManager.GetNode(centerX, centerY).WorldPosition;
 
         float offsetX = (castleBuilding.Width * gridManager.GridSettings.NodeSize) / 2f - (gridManager.GridSettings.NodeSize / 2f);

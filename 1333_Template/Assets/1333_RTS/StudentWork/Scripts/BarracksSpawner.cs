@@ -22,6 +22,12 @@ public class BarracksSpawner : MonoBehaviour
         if (buildingData == null || !buildingData.CanSpawnUnits)
             return;
 
+        if (!PopulationManager.Instance.AddUnits(1))
+        {
+            Debug.LogWarning("Not enough population capacity to spawn unit!");
+            return;
+        }
+
         Vector3 spawnPos = GetClosestFreeNode(transform.position);
         if (spawnPos == Vector3.zero)
         {

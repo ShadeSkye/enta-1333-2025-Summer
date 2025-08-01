@@ -13,7 +13,10 @@ public class BuildingData
 {
     public string BuildingName;
     public Sprite Icon;
-    public int Cost;
+    public int FoodCost;
+    public int WoodCost;
+    public int MetalCost;
+    public int PopulationCost;
     public int Width;
     public int Length;
     public int Height;
@@ -24,4 +27,17 @@ public class BuildingData
     public bool CanSpawnUnits;
     public List<UnitTypePrefab> SpawnableUnits;
     public float SpawnCooldown = 2f;
+    public bool ProducesResources;
+    public List<ResourceProductionData> ResourcesProduced = new();
+
+    [Header("Population Capacity")]
+    public int PopulationCapacityAdded = 0;
+}
+
+[System.Serializable]
+public class ResourceProductionData
+{
+    public ResourceType ResourceType;
+    public int AmountPerCycle = 1;
+    public float ProductionInterval = 5f; // time in seconds between production cycles
 }
